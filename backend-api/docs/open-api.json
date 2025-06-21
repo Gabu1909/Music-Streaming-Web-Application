@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "MUZIK API",
+    "title": "MUZIKAPI",
     "version": "1.0.0",
     "description": "A comprehensive songs management API with audio file upload support",
     "contact": {
