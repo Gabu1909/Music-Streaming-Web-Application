@@ -28,6 +28,7 @@ router.put(
   validate(updateSongSchema),
   songController.updateSong
 );
+router.get("/", songController.getSongsByFilter);
 
 router.delete("/:id", songController.deleteSong);
 
