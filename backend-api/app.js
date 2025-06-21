@@ -8,6 +8,7 @@ const usersRouter = require("./src/routes/users.route");
 const songRoutes = require("./src/routes/songs.route");
 const albumRoutes = require("./src/routes/album.route");
 const authRoutes = require("./src/routes/auth.route");
+const playlistRoutes = require("./src/routes/playlist.route");
 const adminRoutes = require("./src/routes/admin.route");
 const artistRouter = require("./src/routes/artists.route");
 
@@ -28,6 +29,7 @@ app.use("/api/users", usersRouter);
 app.use("/api/songs", songRoutes);
 app.use("/api/albums", albumRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/playlists", playlistRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/artists", artistRouter);
 app.use(resourceNotFound);
