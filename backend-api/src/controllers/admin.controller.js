@@ -1,5 +1,5 @@
 const songService = require("../services/songs.service");
-const userService = require("../services/users.service");
+const userService = require("../services/users.servcice");
 const albumService = require("../services/albums.service");
 
 async function getTotalStats(req, res, next) {
@@ -36,37 +36,44 @@ async function deleteAllUsers(req, res, next) {
 }
 
 async function blockUser(req, res, next) {
-    try {
-      const userId = req.params.id;
-      const user = await userService.getById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ status: "error", message: "User not found" });
-      }
-  
-      await userService.blockUser(userId);
-      res.json({ status: "success", message: `User ${userId} has been blocked` });
-    } catch (error) {
-      next(error);
+  try {
+    const userId = req.params.id;
+    const user = await userService.getById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
+
+    await userService.blockUser(userId);
+    res.json({ status: "success", message: `User ${userId} has been blocked` });
+  } catch (error) {
+    next(error);
   }
-  
-  async function unblockUser(req, res, next) {
-    try {
-      const userId = req.params.id;
-      const user = await userService.getById(userId);
-  
-      if (!user) {
-        return res.status(404).json({ status: "error", message: "User not found" });
-      }
-  
-      await userService.unblockUser(userId);
-      res.json({ status: "success", message: `User ${userId} has been unblocked` });
-    } catch (error) {
-      next(error);
+}
+
+async function unblockUser(req, res, next) {
+  try {
+    const userId = req.params.id;
+    const user = await userService.getById(userId);
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ status: "error", message: "User not found" });
     }
+
+    await userService.unblockUser(userId);
+    res.json({
+      status: "success",
+      message: `User ${userId} has been unblocked`,
+    });
+  } catch (error) {
+    next(error);
   }
-  
+}
+
 module.exports = {
   getTotalStats,
   deleteAllUsers,
