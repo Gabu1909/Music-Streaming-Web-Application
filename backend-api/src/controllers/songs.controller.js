@@ -73,7 +73,6 @@ async function addSong(req, res, next) {
     next(new ApiError(500, "Internal Server Error"));
   }
 }
-
 async function updateSong(req, res, next) {
   try {
     const { id } = req.params;
