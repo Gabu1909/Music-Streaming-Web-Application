@@ -6,7 +6,7 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 const JWT_EXPIRES_IN = "7d";
 
 async function hashPassword(password) {
-  return await bcrypt.hash(password, 5);
+  return await bcrypt.hash(password, 7);
 }
 
 async function comparePassword(password, hash) {
