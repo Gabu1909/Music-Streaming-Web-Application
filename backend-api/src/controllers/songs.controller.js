@@ -113,6 +113,8 @@ async function updateSong(req, res, next) {
         updatePayload.album_id = album.album_id;
       }
     }
+    delete updatePayload.artist;
+    delete updatePayload.album;
 
     const updated = await songService.updateSong(id, updatePayload);
     if (!updated) return next(new ApiError(404, "Song not found"));
