@@ -25,5 +25,6 @@ router.put(
   validate(updatePlaylistSchema),
   playlistController.updatePlaylist
 );
+router.delete("/:id", playlistController.deletePlaylistById);
 
 module.exports = router;
