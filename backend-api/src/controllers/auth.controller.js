@@ -1,4 +1,4 @@
-const userService = require("../services/users.service");
+const userService = require("../services/users.servcice");
 const authService = require("../services/auth.service");
 const ApiError = require("../../api-error");
 const { loginSchema } = require("../schemas/user.schema");
