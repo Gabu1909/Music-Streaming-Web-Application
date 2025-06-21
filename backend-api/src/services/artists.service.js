@@ -15,9 +15,7 @@ async function findOrCreateArtistByName(artistName) {
   const existing = await knex("artists")
     .whereRaw("LOWER(name) = LOWER(?)", [artistName])
     .first();
-
   if (existing) return existing;
-
   const [artist_id] = await knex("artists")
     .insert({ name: artistName })
     .returning("artist_id");
