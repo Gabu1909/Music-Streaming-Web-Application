@@ -68,10 +68,15 @@ async function updatePlaylist(id, data, coverFile) {
     is_system = old.is_system,
     song_ids,
   } = data;
+  const userId = user_id ? Number(user_id) : null;
+  if (userId) {
+    const exists = await knex("users").where({ user_id: userId }).first();
+    if (!exists) throw new ApiError(400, "Invalid user_id");
+  }
 
   const updateData = {
     name,
-    user_id,
+    user_id: userId,
     is_public,
     is_system,
     image_url: coverFile ? getCoverUrl(coverFile) : old.cover_url,
