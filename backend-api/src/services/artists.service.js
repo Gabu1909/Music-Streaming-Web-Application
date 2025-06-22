@@ -83,6 +83,7 @@ async function countArtists() {
   const result = await knex("artists").count("* as count").first();
   return Number(result.count);
 }
+
 module.exports = {
   create,
   findByName,
