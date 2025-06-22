@@ -2,7 +2,6 @@ const artistService = require("../services/artists.service");
 const { createArtistSchema } = require("../schemas/artist.schema");
 const knex = require("../database/knex");
 
-// Tạo mới artist
 async function createArtist(req, res) {
   try {
     const parsed = createArtistSchema.safeParse(req.body);
