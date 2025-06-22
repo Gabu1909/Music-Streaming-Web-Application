@@ -73,6 +73,7 @@ async function addSong(req, res, next) {
     next(new ApiError(500, "Internal Server Error"));
   }
 }
+
 async function updateSong(req, res, next) {
   try {
     const { id } = req.params;
@@ -91,6 +92,7 @@ async function updateSong(req, res, next) {
 
     const currentSong = await songService.getSongById(id);
     if (!currentSong) return next(new ApiError(404, "Song not found"));
+
 
     if (songData.artist) {
       const currentArtist = await artistService.findOrCreateArtistByName(
@@ -113,8 +115,10 @@ async function updateSong(req, res, next) {
         updatePayload.album_id = album.album_id;
       }
     }
+
     delete updatePayload.artist;
     delete updatePayload.album;
+
 
     const updated = await songService.updateSong(id, updatePayload);
     if (!updated) return next(new ApiError(404, "Song not found"));

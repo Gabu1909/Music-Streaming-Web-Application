@@ -52,6 +52,11 @@ async function getSongsByFilter({ title, artist, genre }) {
   return query.select();
 }
 
+async function countSongs() {
+  const result = await knex("songs").count("song_id as total");
+  return Number(result[0].total);
+}
+
 module.exports = {
   songRepository,
   readsongData,
@@ -61,4 +66,5 @@ module.exports = {
   addArtistToSong,
   getSongById,
   getSongsByFilter,
+  countSongs,
 };

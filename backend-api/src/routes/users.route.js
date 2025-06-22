@@ -15,7 +15,6 @@ router.put(
   usersController.updateUser
 );
 router.delete("/:id", usersController.deleteUser);
-
 router.post(
   "/:id/favorites",
   uploadnone.none(),
@@ -23,7 +22,6 @@ router.post(
   usersController.addFavoriteSong
 );
 router.get("/:id/favorites", usersController.getFavoriteSong);
-
 router.delete(
   "/:id/favorites",
   uploadnone.none(),

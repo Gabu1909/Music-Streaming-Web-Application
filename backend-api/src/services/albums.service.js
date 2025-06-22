@@ -173,9 +173,16 @@ async function deleteAlbumById(albumId) {
     throw error;
   }
 }
+
+async function countAlbums() {
+  const result = await knex("albums").count("album_id as total");
+  return Number(result[0].total);
+}
+
 module.exports = {
   findOrCreateAlbumByName,
   createAlbumWithSongs,
   updateAlbum,
   deleteAlbumById,
+  countAlbums,
 };

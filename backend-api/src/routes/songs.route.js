@@ -7,6 +7,7 @@ const {
   createSongSchema,
   updateSongSchema,
 } = require("../schemas/song.schema");
+
 router.get("/", songController.getSongsByFilter);
 router.post(
   "/",
@@ -28,7 +29,6 @@ router.put(
   validate(updateSongSchema),
   songController.updateSong
 );
-router.get("/", songController.getSongsByFilter);
 
 router.delete("/:id", songController.deleteSong);
 

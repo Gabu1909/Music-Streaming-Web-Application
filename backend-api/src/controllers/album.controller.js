@@ -54,4 +54,5 @@ const AlbumController = {
     }
   },
 };
+
 module.exports = AlbumController;

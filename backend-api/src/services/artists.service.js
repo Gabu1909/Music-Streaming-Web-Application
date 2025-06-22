@@ -1,5 +1,10 @@
 const knex = require("../database/knex");
 
+async function create(artistData) {
+  const [artist] = await knex("artists").insert(artistData).returning("*");
+  return artist;
+}
+
 async function findByName(name) {
   return knex("artists").where("name", name).first();
 }
@@ -11,6 +16,7 @@ async function findById(artistId) {
 async function findByUserId(userId) {
   return knex("artists").where("user_id", userId).first();
 }
+
 async function findOrCreateArtistByName(artistName) {
   const existing = await knex("artists")
     .whereRaw("LOWER(name) = LOWER(?)", [artistName])
@@ -23,6 +29,7 @@ async function findOrCreateArtistByName(artistName) {
 }
 
 module.exports = {
+  create,
   findByName,
   findById,
   findByUserId,
