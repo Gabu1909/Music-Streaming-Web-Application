@@ -823,7 +823,6 @@
         }
       }
     },
-<<<<<<< HEAD
     "/api/admin/total": {
       "get": {
         "summary": "Get total counts of songs, users, albums, and artists",
@@ -981,12 +980,6 @@
         "summary": "Create a new artist",
         "description": "Create a new artist with name, bio, and avatar URL",
         "operationId": "createArtist",
-=======
-    "/api/playlists": {
-      "post": {
-        "summary": "Create a new playlist",
-        "tags": ["Playlists"],
->>>>>>> cb55f08e7adfb01c1447c274da0ea28f3ece665d
         "requestBody": {
           "required": true,
           "content": {
@@ -1127,7 +1120,6 @@
           }
         }
       }
-<<<<<<< HEAD
     },
 
     "/api/artists/deleteAll": {
@@ -1443,8 +1435,6 @@
           }
         }
       }
-=======
->>>>>>> cb55f08e7adfb01c1447c274da0ea28f3ece665d
     }
   },
   "components": {
@@ -1471,7 +1461,6 @@
             "type": "string",
             "nullable": true
           },
-
           "audioUrl": {
             "type": "string",
             "format": "binary",
@@ -1487,7 +1476,7 @@
             "description": "Image file URL"
           },
           "duration": {
-            "type": "float"
+            "type": "number"
           },
           "createdAt": {
             "type": "string",
@@ -1498,6 +1487,39 @@
           }
         },
         "required": ["id", "title", "artist", "audioUrl"]
+      },
+      "Artist": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Auto-generated artist ID",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Artist's name",
+            "maxLength": 255
+          },
+          "bio": {
+            "type": "string",
+            "description": "Short biography of the artist",
+            "maxLength": 1000
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the artist's avatar image"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the artist was created",
+            "readOnly": true,
+            "example": "2025-06-21T12:00:00Z"
+          }
+        },
+        "required": ["id", "name"]
       },
       "SuccessResponse": {
         "type": "object",
@@ -1664,7 +1686,6 @@
           }
         }
       },
-
       "500InternalServerError": {
         "description": "Internal Server Error - Unexpected server error",
         "content": {
@@ -1689,7 +1710,6 @@
         "schema": {
           "type": "integer"
         }
-<<<<<<< HEAD
       },
       "limitParam": {
         "name": "limit",
@@ -1715,42 +1735,6 @@
         },
         "required": false,
         "example": 1
-      },
-
-      "Artist": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Auto-generated artist ID",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Artist's name",
-            "maxLength": 255
-          },
-          "bio": {
-            "type": "string",
-            "description": "Short biography of the artist",
-            "maxLength": 1000
-          },
-          "avatar_url": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL to the artist's avatar image"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp when the artist was created",
-            "readOnly": true,
-            "example": "2025-06-21T12:00:00Z"
-          }
-        },
-        "required": ["id", "name"]
-=======
->>>>>>> cb55f08e7adfb01c1447c274da0ea28f3ece665d
       }
     }
   }
