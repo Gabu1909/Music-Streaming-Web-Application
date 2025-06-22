@@ -1,5 +1,4 @@
-
-const userService = require("../services/users.servcice");
+const userService = require("../services/users.service");
 const ApiError = require("../../api-error");
 const bcrypt = require("bcrypt");
 const JSend = require("../jsend");

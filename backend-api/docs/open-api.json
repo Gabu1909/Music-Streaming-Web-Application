@@ -973,6 +973,487 @@
           }
         }
       }
+    },
+    "/api/artists": {
+      "post": {
+        "summary": "Create a new artist",
+        "description": "Create a new artist with name, bio, and avatar URL",
+        "operationId": "createArtist",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Artist's full name"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "Short biography of the artist"
+                  },
+                  "avatar_url": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "tags": ["Artists"],
+        "responses": {
+          "201": {
+            "description": "Artist created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["success"]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artist": {
+                          "$ref": "#/components/schemas/Artist"
+                        }
+                      },
+                      "required": ["artist"]
+                    }
+                  },
+                  "required": ["status", "data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all artists",
+        "description": "Permanently delete all artists from the database",
+        "operationId": "deleteAllArtists",
+        "tags": ["Artists"],
+        "responses": {
+          "200": {
+            "description": "All artists deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["success"]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "All artists have been deleted"
+                    }
+                  },
+                  "required": ["status", "message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get artists with filtering and pagination",
+        "description": "Retrieve a paginated list of artists with optional name filtering",
+        "operationId": "getArtistsByFilter",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "name",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Filter artists by name (partial match)"
+          },
+          {
+            "$ref": "#/components/parameters/limitParam"
+          },
+          {
+            "$ref": "#/components/parameters/pageParam"
+          }
+        ],
+        "tags": ["Artists"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved artists list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["success"]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artists": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Artist"
+                          }
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "properties": {
+                            "totalRecords": {
+                              "type": "integer"
+                            },
+                            "page": {
+                              "type": "integer"
+                            },
+                            "limit": {
+                              "type": "integer"
+                            },
+                            "totalPages": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "required": ["artists", "metadata"]
+                    }
+                  },
+                  "required": ["status", "data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/artists/{id}": {
+      "get": {
+        "summary": "Get artist by ID",
+        "description": "Retrieve an artist by their unique ID",
+        "operationId": "getArtistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID of the artist to retrieve"
+          }
+        ],
+        "tags": ["Artists"],
+        "responses": {
+          "200": {
+            "description": "Artist found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artist": {
+                          "$ref": "#/components/schemas/Artist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+
+      "put": {
+        "summary": "Update artist by ID",
+        "description": "Update an existing artist (including file upload for avatar_url)",
+        "operationId": "updateArtistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID of the artist to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the artist"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "Biography of the artist"
+                  },
+                  "avatar_url": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  }
+                },
+                "required": ["name"]
+              }
+            }
+          }
+        },
+        "tags": ["Artists"],
+        "responses": {
+          "200": {
+            "description": "Artist updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artist": {
+                          "$ref": "#/components/schemas/Artist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+
+      "delete": {
+        "summary": "Delete artist by ID",
+        "description": "Remove an artist from the database by their ID",
+        "operationId": "deleteArtistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the artist to delete"
+          }
+        ],
+        "tags": ["Artists"],
+        "responses": {
+          "200": {
+            "description": "Artist deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string" },
+                    "message": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/admin/": {
+      "get": {
+        "summary": "Get total counts of songs, users, albums, and artists",
+        "description": "Retrieve total number of songs, users, albums, and artists for admin statistics",
+        "operationId": "getTotalCounts",
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved total counts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["success"]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalSongs": {
+                          "type": "integer"
+                        },
+                        "totalUsers": {
+                          "type": "integer"
+                        },
+                        "totalAlbums": {
+                          "type": "integer"
+                        },
+                        "totalArtists": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "totalSongs",
+                        "totalUsers",
+                        "totalAlbums",
+                        "totalArtists"
+                      ]
+                    }
+                  },
+                  "required": ["status", "data"]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all users",
+        "description": "Admin-only endpoint to delete all user accounts from the system. Use with extreme caution.",
+        "operationId": "deleteAllUsers",
+        "tags": ["Admin"],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "All users deleted successfully"
+                    }
+                  },
+                  "required": ["status", "message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": { "type": "string", "example": "fail" },
+                    "message": {
+                      "type": "string",
+                      "example": "Could not delete users"
+                    }
+                  },
+                  "required": ["status", "message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/admin/users/{id}/block": {
+      "patch": {
+        "summary": "Block user",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID of the user to block"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User blocked successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+
+    "/api/admin/users/{id}/unblock": {
+      "patch": {
+        "summary": "Unblock user",
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" },
+            "description": "ID of the user to unblock"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unblocked successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -1151,6 +1632,34 @@
             }
           }
         }
+      },
+      "Artist": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Auto-generated artist ID",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Artist's name",
+            "maxLength": 255
+          },
+          "bio": {
+            "type": "string",
+            "description": "Short biography of the artist",
+            "maxLength": 1000
+          },
+          "avatar_url": { "type": "string", "format": "binary" },
+          "createdAt": {
+            "type": "string",
+            "format": "date",
+            "description": "Timestamp when the artist was created",
+            "readOnly": true
+          }
+        },
+        "required": ["id", "name"]
       }
     },
     "responses": {
