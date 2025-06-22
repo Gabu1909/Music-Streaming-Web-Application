@@ -29,6 +29,12 @@
               "type": "string"
             },
             "description": "Filter songs by title (partial match)"
+          },
+          {
+            "$ref": "#/components/parameters/limitParam"
+          },
+          {
+            "$ref": "#/components/parameters/pageParam"
           }
         ],
         "tags": ["Songs"],
@@ -1203,6 +1209,23 @@
       }
     },
     "parameters": {
+      "limitParam": {
+        "name": "limit",
+        "description": "Number of records per page",
+        "in": "query",
+        "schema": {
+          "type": "integer"
+        },
+        "required": false
+      },
+      "pageParam": {
+        "name": "page",
+        "description": "Page number of records",
+        "in": "query",
+        "schema": {
+          "type": "integer"
+        }
+      },
       "songIdParam": {
         "name": "id",
         "description": "Song ID",
