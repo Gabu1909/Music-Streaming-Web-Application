@@ -1,6 +1,5 @@
 const express = require("express");
 const router = express.Router();
-
 const upload = require("../middlewares/upload_combined");
 const artistController = require("../controllers/artist.controller");
 

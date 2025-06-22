@@ -8,11 +8,11 @@ function validate(schema) {
         ...req.query,
         ...req.body,
       };
+
       if (req.file) input.file = req.file;
       if (req.files) input.files = req.files;
 
       const result = schema.safeParse({ input });
-
 
       if (!result.success) {
         const errorMessages = result.error.issues.map((issue) => {

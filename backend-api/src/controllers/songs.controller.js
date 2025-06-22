@@ -93,7 +93,7 @@ async function updateSong(req, res, next) {
     const currentSong = await songService.getSongById(id);
     if (!currentSong) return next(new ApiError(404, "Song not found"));
 
-
+    // Handle artist
     if (songData.artist) {
       const currentArtist = await artistService.findOrCreateArtistByName(
         songData.artist
@@ -103,6 +103,7 @@ async function updateSong(req, res, next) {
       updatePayload.artist_id = currentArtist.artist_id;
     }
 
+    // Handle album
     if ("album" in songData) {
       const albumName = songData.album?.trim();
       if (!albumName) {
@@ -115,10 +116,6 @@ async function updateSong(req, res, next) {
         updatePayload.album_id = album.album_id;
       }
     }
-
-    delete updatePayload.artist;
-    delete updatePayload.album;
-
 
     const updated = await songService.updateSong(id, updatePayload);
     if (!updated) return next(new ApiError(404, "Song not found"));

@@ -64,7 +64,6 @@ async function unblockUser(req, res, next) {
     next(new ApiError(500, error.message));
   }
 }
-
 module.exports = {
   getTotalStats,
   deleteAllUsers,

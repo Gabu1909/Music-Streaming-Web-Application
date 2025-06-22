@@ -2,6 +2,7 @@ const knex = require("../database/knex");
 const path = require("path");
 const { findOrCreateArtistByName } = require("./artists.service");
 const mm = require("music-metadata");
+const { count } = require("console");
 
 function getAudioUrl(file) {
   return `public/uploads/audio/${file.filename}`;
@@ -30,7 +31,9 @@ async function findOrCreateAlbumByName(title, artist_id) {
     .whereRaw("LOWER(title) = ?", [title.toLowerCase()])
     .andWhere("artist_id", artist_id)
     .first();
+
   if (existing) return existing;
+
   const [created] = await knex("albums")
     .insert({
       title,
@@ -165,8 +168,10 @@ async function deleteAlbumById(albumId) {
   const trx = await knex.transaction();
   try {
     await trx("songs").where({ album_id: albumId }).del();
+
     const deleted = await trx("albums").where({ album_id: albumId }).del();
     await trx.commit();
+
     return deleted;
   } catch (error) {
     await trx.rollback();
