@@ -1,8 +1,7 @@
-
-const userService = require("../services/users.servcice");
+const userService = require("../services/users.service");
 const ApiError = require("../../api-error");
 const bcrypt = require("bcrypt");
-const JSend = require("../jsend");
+
 async function getAllUsers(req, res, next) {
   try {
     const users = await userService.getAll();
@@ -60,9 +59,12 @@ async function addFavoriteSong(req, res, next) {
     const { id } = req.params;
     const { song_id } = req.validated;
 
-    const result = await userService.addFavoriteSong(id, song_id);
+    await userService.addFavoriteSong(id, song_id);
 
-    res.status(200).json(JSend.success(result));
+    return res.status(200).json({
+      status: "success",
+      message: "Song added to favorites",
+    });
   } catch (err) {
     return next(new ApiError(500, "Internal Server Error"));
   }
@@ -74,9 +76,10 @@ async function removeFavoriteSong(req, res, next) {
     const { song_id } = req.validated;
 
     await userService.removeFavoriteSong(id, song_id);
-    return res
-      .status(200)
-      .json(JSend.success({ message: "Song removed from favorites" }));
+    return res.status(200).json({
+      status: "success",
+      message: "Song removed to favorites",
+    });
   } catch (err) {
     return next(new ApiError(500, "Internal Server Error"));
   }
@@ -86,7 +89,10 @@ async function getFavoriteSong(req, res, next) {
     const { id } = req.params;
     const userId = Number(id);
     if (isNaN(userId) || userId <= 0) {
-      return res.status(404).json(JSend.error({ message: "Invalid User" }));
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid user ID",
+      });
     }
 
     const favorites = await userService.getFavSong(userId);

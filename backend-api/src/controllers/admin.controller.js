@@ -73,7 +73,6 @@ async function unblockUser(req, res, next) {
     next(error);
   }
 }
-
 module.exports = {
   getTotalStats,
   deleteAllUsers,
