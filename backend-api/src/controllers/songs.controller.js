@@ -132,10 +132,12 @@ async function updateSong(req, res, next) {
 
 async function getSongsByFilter(req, res, next) {
   try {
-    const songs = await songService.getSongsByFilter(req.query);
+    const { songs, pagination } = await songService.getSongsByFilter(req.query);
+
     if (songs.length === 0)
       return res.status(404).json(JSend.error("No songs found"));
-    res.json(JSend.success({ songs }));
+
+    res.json(JSend.success({ songs, pagination }));
   } catch (err) {
     next(new ApiError(500, err.message));
   }
