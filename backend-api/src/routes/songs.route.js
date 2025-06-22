@@ -8,6 +8,7 @@ const {
   updateSongSchema,
 } = require("../schemas/song.schema");
 
+router.get("/", songController.getSongsByFilter);
 router.post(
   "/",
   upload.fields([

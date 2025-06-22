@@ -1,7 +1,7 @@
 {
   "openapi": "3.1.1",
   "info": {
-    "title": "MUZIK API",
+    "title": "MUZIKAPI",
     "version": "1.0.0",
     "description": "A comprehensive songs management API with audio file upload support",
     "contact": {
@@ -29,12 +29,6 @@
               "type": "string"
             },
             "description": "Filter songs by title (partial match)"
-          },
-          {
-            "$ref": "#/components/parameters/limitParam"
-          },
-          {
-            "$ref": "#/components/parameters/pageParam"
           }
         ],
         "tags": ["Songs"],
@@ -829,186 +823,130 @@
         }
       }
     },
-    "/api/admin/total": {
-      "get": {
-        "summary": "Get total counts of songs, users, and albums",
-        "description": "Retrieve total number of songs, users, and albums for admin statistics",
-        "operationId": "getTotalCounts",
-        "tags": ["Admin"],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved total counts",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "enum": ["success"]
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "totalSongs": {
-                          "type": "integer"
-                      
-                        },
-                        "totalUsers": {
-                          "type": "integer"
-                    
-                        },
-                        "totalAlbums": {
-                          "type": "integer"
-                       
-                        }
-                      },
-                      "required": ["totalSongs", "totalUsers", "totalAlbums"]
-                    }
-                  },
-                  "required": ["status", "data"]
-                }
-              }
-            }
-          },
-          "500": {
-            "$ref": "#/components/responses/500InternalServerError"
-          }
-        }
-      }
-    },
-    
-    "/api/admin/delete": {
-      "delete": {
-        "summary": "Delete all users",
-        "description": "Admin-only endpoint to delete all user accounts from the system. Use with extreme caution.",
-        "operationId": "deleteAllUsers",
-        "tags": ["Admin"],
-        "responses": {
-          "200": {
-            "description": "Successfully deleted all users",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "success"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "All users deleted successfully"
-                    }
-                  },
-                  "required": ["status", "message"]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": { "type": "string", "example": "fail" },
-                    "message": { "type": "string", "example": "Could not delete users" }
-                  },
-                  "required": ["status", "message"]
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
-    "/api/admin/users/{id}/block": {
-      "patch": {
-        "summary": "Block user",
-        "tags": ["Admin"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" },
-            "description": "ID of the user to block"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User blocked successfully"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-
-    "/api/admin/users/{id}/unblock": {
-      "patch": {
-        "summary": "Unblock user",
-        "tags": ["Admin"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" },
-            "description": "ID of the user to unblock"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User unblocked successfully"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
-    },
-
-"/api/artists": {
-    "post": {
-      "summary": "Create a new artist",
-      "description": "Create a new artist with name, bio, and avatar URL",
-      "operationId": "createArtist",
-      "requestBody": {
+    "/api/playlists": {
+      "post": {
+        "summary": "Create a new playlist",
+        "tags": ["Playlists"],
+        "requestBody": {
           "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": {
-                    "type": "string",
-                    "maxLength": 255,
-                    "description": "Artist's full name"
+                  "name": { "type": "string" },
+                  "user_id": { "type": "integer", "nullable": true },
+                  "is_public": { "type": "boolean" },
+                  "is_system": { "type": "boolean" },
+                  "song_ids": {
+                    "type": "array",
+                    "items": { "type": "integer" }
                   },
-                  "bio": {
-                    "type": "string",
-                    "description": "Short biography of the artist"
+                  "cover": { "type": "string", "format": "binary" }
+                },
+                "required": ["name", "is_system", "song_ids"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": { "description": "Playlist created successfully" },
+          "400": { "description": "Validation error" }
+        }
+      },
+      "get": {
+        "summary": "Get all playlists",
+        "tags": ["Playlists"],
+        "responses": {
+          "200": {
+            "description": "List of playlists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Playlist" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all playlists",
+        "tags": ["Playlists"],
+        "responses": {
+          "200": { "description": "All playlists deleted" }
+        }
+      }
+    },
+    "/api/playlists/{id}": {
+      "put": {
+        "summary": "Update a playlist",
+        "tags": ["Playlists"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": { "type": "string" },
+                  "user_id": { "type": "integer", "nullable": true },
+                  "is_public": { "type": "boolean" },
+                  "is_system": { "type": "boolean" },
+                  "song_ids": {
+                    "type": "array",
+                    "items": { "type": "integer" },
+                    "nullable": true
                   },
-                  "avatar_url": {
-                    "type": "string",
-                    "format": "uri",
-                    "description": "URL to the artist's avatar image"
-                  }
+                  "cover": { "type": "string", "format": "binary" }
                 },
                 "required": ["name"]
               }
             }
           }
         },
-        "tags": ["Artists"],
         "responses": {
-          "201": {
-            "description": "Artist created successfully",
+          "200": { "description": "Playlist updated successfully" },
+          "400": { "description": "Validation error" }
+        }
+      },
+      "delete": {
+        "summary": "Delete a playlist by ID",
+        "tags": ["Playlists"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the playlist to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Playlist deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Playlist" }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Playlist not found",
             "content": {
               "application/json": {
                 "schema": {
@@ -1016,33 +954,20 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"]
+                      "example": "fail"
                     },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "artist": {
-                          "$ref": "#/components/schemas/Artist"
-                        }
-                      },
-                      "required": ["artist"]
+                    "message": {
+                      "type": "string",
+                      "example": "Playlist not found"
                     }
-                  },
-                  "required": ["status", "data"]
+                  }
                 }
               }
             }
-          },
-          "400": {
-            "$ref": "#/components/responses/400BadRequest"
-          },
-          "500": {
-            "$ref": "#/components/responses/500InternalServerError"
           }
         }
       }
     }
-
   },
   "components": {
     "schemas": {
@@ -1088,7 +1013,7 @@
           },
           "createdAt": {
             "type": "string",
-            "format": "date-time",
+            "format": "date",
             "readOnly": true,
             "description": "Creation timestamp",
             "example": "2025-06-18T10:30:00Z"
@@ -1160,7 +1085,7 @@
             "description": "Image file URL"
           },
           "role": { "type": "string" },
-          "created_at": { "type": "string", "format": "date-time" }
+          "created_at": { "type": "string", "format": "date" }
         }
       },
       "Album": {
@@ -1176,6 +1101,50 @@
           }
         },
         "required": ["title", "artist"]
+      },
+      "Playlist": {
+        "type": "object",
+        "properties": {
+          "playlist_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "Top Hits 2025"
+          },
+          "user_id": {
+            "type": "integer",
+            "nullable": true,
+            "example": 12
+          },
+          "is_public": {
+            "type": "boolean",
+            "example": true
+          },
+          "is_system": {
+            "type": "boolean",
+            "example": false
+          },
+          "cover_url": {
+            "type": "string",
+            "nullable": true
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date"
+          },
+          "songs": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Song"
+            }
+          }
+        }
       }
     },
     "responses": {
@@ -1242,68 +1211,7 @@
         "schema": {
           "type": "integer"
         }
-      },
-      "limitParam": {
-        "name": "limit",
-        "description": "Number of records per page",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "default": 5,
-          "minimum": 1,
-          "maximum": 100
-        },
-        "required": false,
-        "example": 10
-      },
-      "pageParam": {
-        "name": "page",
-        "description": "Page number of records",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "default": 1,
-          "minimum": 1
-        },
-        "required": false,
-        "example": 1
-      },
-
-      "Artist": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Auto-generated artist ID",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Artist's name",
-            "maxLength": 255
-          },
-          "bio": {
-            "type": "string",
-            "description": "Artist biography",
-            "maxLength": 1000
-          },
-          "avatar_url": {
-            "type": "string",
-            "format": "binary",
-            "description": "Avatar file URL",
-            "readOnly": true
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Artist creation timestamp",
-            "readOnly": true,
-            "example": "2025-06-21T12:00:00Z"
-          }
-        },
-        "required": ["id", "name"]
       }
-
     }
   }
 }
