@@ -980,12 +980,10 @@
         }
       }
     },
-
-    "/api/artists/createArtist": {
+    "/api/playlists": {
       "post": {
-        "summary": "Create a new artist",
-        "description": "Create a new artist with name, bio, and avatar URL",
-        "operationId": "createArtist",
+        "summary": "Create a new playlist",
+        "tags": ["Playlists"],
         "requestBody": {
           "required": true,
           "content": {

@@ -10,7 +10,7 @@ const albumRoutes = require("./src/routes/album.route");
 const authRoutes = require("./src/routes/auth.route");
 const adminRoutes = require("./src/routes/admin.route");
 const artistRoutes = require("./src/routes/artists.route");
-
+const playlistRoutes = require("./src/routes/playlist.route");
 const app = express();
 const {
   resourceNotFound,
@@ -31,7 +31,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/artists", artistRoutes);
 app.use("/api/playlists", playlistRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/artists", artistRouter);
+app.use("/api/artists", artistRoutes);
 app.use(resourceNotFound);
 app.use(handleError);
 module.exports = app;
