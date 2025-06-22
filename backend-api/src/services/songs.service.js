@@ -41,15 +41,29 @@ async function getSongById(song_id) {
   return knex("songs").where({ song_id }).first();
 }
 
-async function getSongsByFilter({ title, artist, genre }) {
+async function getSongsByFilter({ title, artist, limit, page }) {
   const query = knex("songs");
+
   if (title)
     query.whereRaw("LOWER(title) LIKE ?", [`%${title.toLowerCase()}%`]);
   if (artist)
     query.whereRaw("LOWER(artist) LIKE ?", [`%${artist.toLowerCase()}%`]);
-  if (genre)
-    query.whereRaw("LOWER(genre) LIKE ?", [`%${genre.toLowerCase()}%`]);
-  return query.select();
+
+  const l = Math.max(1, parseInt(limit) || 10);
+  const p = Math.max(1, parseInt(page) || 1);
+  const offset = (p - 1) * l;
+
+  const totalResult = await query.clone().count("song_id as count").first();
+  const songs = await query.clone().limit(l).offset(offset);
+
+  return {
+    songs,
+    pagination: {
+      page: p,
+      limit: l,
+      total: parseInt(totalResult.count),
+    },
+  };
 }
 
 async function countSongs() {
