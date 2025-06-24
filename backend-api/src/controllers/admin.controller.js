@@ -1,22 +1,26 @@
 const songService = require("../services/songs.service");
 const userService = require("../services/users.service");
 const albumService = require("../services/albums.service");
+const artistService = require("../services/artists.service");
 const JSend = require("../jsend");
 const ApiError = require("../../api-error");
 
 async function getTotalStats(req, res, next) {
   try {
-    const [totalSongs, totalUsers, totalAlbums] = await Promise.all([
-      songService.countSongs(),
-      userService.countUsers(),
-      albumService.countAlbums(),
-    ]);
+    const [totalSongs, totalUsers, totalAlbums, totalArtists] =
+      await Promise.all([
+        songService.countSongs(),
+        userService.countUsers(),
+        albumService.countAlbums(),
+        artistService.countArtists(),
+      ]);
 
     res.json(
       JSend.success({
         totalSongs,
         totalUsers,
         totalAlbums,
+        totalArtists,
       })
     );
   } catch (error) {
