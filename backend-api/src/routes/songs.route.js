@@ -18,7 +18,7 @@ router.post(
   songController.addSong
 );
 router.get("/:id", songController.getSongById);
-
+router.delete("/", songController.deleteAllSongs);
 router.put(
   "/:id",
   upload.fields([

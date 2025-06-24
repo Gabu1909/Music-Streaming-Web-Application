@@ -32,6 +32,9 @@ async function updateSong(song_id, updatePayload) {
 async function deleteSong(song_id) {
   return knex("songs").where({ song_id }).del();
 }
+async function deleteAllSong() {
+  return knex("songs").del();
+}
 
 async function addArtistToSong(song_id, artist_id) {
   return knex("songartists").insert({ song_id, artist_id });
@@ -76,6 +79,7 @@ module.exports = {
   readsongData,
   createSong,
   updateSong,
+  deleteAllSong,
   deleteSong,
   addArtistToSong,
   getSongById,

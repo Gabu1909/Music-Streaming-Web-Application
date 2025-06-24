@@ -161,10 +161,20 @@ async function deleteSong(req, res, next) {
     next(new ApiError(500, err.message));
   }
 }
+async function deleteAllSongs(req, res) {
+  try {
+    await songService.deleteAllSong();
+    return res.json(JSend.success({ message: "All songs have been deleted" }));
+  } catch (error) {
+    console.error("Error deleting all songs:", error);
+    return res.status(500).json(JSend.error("Internal server error"));
+  }
+}
 
 module.exports = {
   addSong,
   updateSong,
+  deleteAllSongs,
   getSongsByFilter,
   getSongById,
   deleteSong,
