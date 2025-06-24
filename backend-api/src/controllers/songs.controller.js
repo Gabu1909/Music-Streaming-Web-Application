@@ -2,7 +2,7 @@ const songService = require("../services/songs.service");
 const artistService = require("../services/artists.service");
 const albumService = require("../services/albums.service");
 const mm = require("music-metadata");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 const { updateSongSchema } = require("../schemas/song.schema");
 const JSend = require("../jsend");
 

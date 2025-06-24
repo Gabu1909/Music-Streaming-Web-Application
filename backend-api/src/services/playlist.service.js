@@ -1,5 +1,5 @@
 const knex = require("../database/knex");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 
 function getCoverUrl(file) {
   return `public/uploads/images/${file.filename}`;

@@ -3,7 +3,7 @@ const userService = require("../services/users.service");
 const albumService = require("../services/albums.service");
 const artistService = require("../services/artists.service");
 const JSend = require("../jsend");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 
 async function getTotalStats(req, res, next) {
   try {

@@ -1,5 +1,5 @@
 const knex = require("../database/knex");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 
 async function create(userData) {
   const [user] = await knex("users").insert(userData).returning("*");

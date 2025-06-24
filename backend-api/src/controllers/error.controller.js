@@ -1,4 +1,4 @@
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 const JSend = require("../jsend");
 
 function methodNotAllowed(req, res, next) {

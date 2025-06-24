@@ -1,21 +1,21 @@
 const express = require("express");
 const cors = require("cors");
-const RateLimiter = require("./src/middlewares/rate_limit");
-const JSend = require("./src/jsend");
+const RateLimiter = require("./middlewares/rate_limit");
+const JSend = require("./jsend");
 const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./docs/open-api.json");
-const usersRouter = require("./src/routes/users.route");
-const songRoutes = require("./src/routes/songs.route");
-const albumRoutes = require("./src/routes/album.route");
-const authRoutes = require("./src/routes/auth.route");
-const adminRoutes = require("./src/routes/admin.route");
-const artistRoutes = require("./src/routes/artists.route");
-const playlistRoutes = require("./src/routes/playlist.route");
+const swaggerDocument = require("../docs/open-api.json");
+const usersRouter = require("./routes/users.route");
+const songRoutes = require("./routes/songs.route");
+const albumRoutes = require("./routes/album.route");
+const authRoutes = require("./routes/auth.route");
+const adminRoutes = require("./routes/admin.route");
+const artistRoutes = require("./routes/artists.route");
+const playlistRoutes = require("./routes/playlist.route");
 const app = express();
 const {
   resourceNotFound,
   handleError,
-} = require("./src/controllers/error.controller");
+} = require("./controllers/error.controller");
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

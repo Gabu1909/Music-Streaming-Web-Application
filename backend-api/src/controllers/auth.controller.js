@@ -1,6 +1,6 @@
 const userService = require("../services/users.service");
 const authService = require("../services/auth.service");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 const { loginSchema } = require("../schemas/user.schema");
 
 async function createUser(req, res, next) {
