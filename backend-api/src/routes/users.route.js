@@ -5,6 +5,7 @@ const upload = require("../middlewares/upload_combined");
 const multer = require("multer");
 const { favoriteSongSchema } = require("../schemas/favorite.schema");
 const validate = require("../middlewares/validate.middleware");
+const { updateUserSchema } = require("../schemas/user.schema");
 
 const uploadnone = multer();
 router.get("/", usersController.getAllUsers);
@@ -30,5 +31,10 @@ router.delete(
   validate(favoriteSongSchema),
   usersController.removeFavoriteSong
 );
-
+router.put(
+  "/:id",
+  upload.fields([{ name: "avatar_url", maxCount: 1 }]),
+  validate(updateUserSchema),
+  usersController.updateUser
+);
 module.exports = router;
