@@ -1,4 +1,5 @@
 const knex = require("../database/knex");
+const ApiError = require("../../api-error");
 
 async function create(userData) {
   const [user] = await knex("users").insert(userData).returning("*");
@@ -30,10 +31,15 @@ async function remove(id) {
 }
 
 async function addFavoriteSong(userId, songId) {
+  const song = await knex("songs").where({ song_id: songId }).first();
+  if (!song) {
+    throw new ApiError(404, "Song not found");
+  }
   await knex("favorites")
     .insert({ user_id: userId, song_id: songId })
     .onConflict(["user_id", "song_id"])
     .ignore();
+  return { user_id: userId, song_id: songId };
 }
 async function removeFavoriteSong(userId, songId) {
   await knex("favorites").where({ user_id: userId, song_id: songId }).del();
@@ -50,7 +56,7 @@ async function countUsers() {
 }
 
 async function deleteAllUsers() {
-  await knex("users").del(); 
+  await knex("users").del();
 }
 
 async function blockUser(id) {

@@ -72,13 +72,11 @@ async function addFavoriteSong(req, res, next) {
     const { id } = req.params;
     const { song_id } = req.validated;
 
-    await userService.addFavoriteSong(id, song_id);
+    const result = await userService.addFavoriteSong(id, song_id);
 
-    return res.status(200).json({
-      status: "success",
-      message: "Song added to favorites",
-    });
+    res.status(200).json(JSend.success(result));
   } catch (err) {
+    console.error("Add Favorite Song Error:", err);
     return next(new ApiError(500, "Internal Server Error"));
   }
 }

@@ -6,7 +6,7 @@ const multer = require("multer");
 const { favoriteSongSchema } = require("../schemas/favorite.schema");
 const validate = require("../middlewares/validate.middleware");
 const { updateUserSchema } = require("../schemas/user.schema");
-
+const upload = require("../middlewares/upload_combined");
 const uploadnone = multer();
 router.get("/", usersController.getAllUsers);
 router.get("/:id", usersController.getUserById);
