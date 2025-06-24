@@ -88,6 +88,26 @@
           "400": {
             "$ref": "#/components/responses/400BadRequest"
           },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -165,7 +185,26 @@
           "400": {
             "$ref": "#/components/responses/400BadRequest"
           },
-
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -179,6 +218,26 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/200Success"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
@@ -314,7 +373,26 @@
           "404": {
             "$ref": "#/components/responses/404NotFound"
           },
-
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -339,6 +417,26 @@
           },
           "404": {
             "$ref": "#/components/responses/404NotFound"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
@@ -476,6 +574,26 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": ["Users"]
@@ -548,6 +666,26 @@
                   "properties": {
                     "status": { "type": "string", "example": "fail" },
                     "message": { "type": "string", "example": "Song not found" }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
                   }
                 }
               }
@@ -627,6 +765,26 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -671,6 +829,26 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Album"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
                 }
               }
             }
@@ -876,6 +1054,26 @@
               }
             }
           },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -950,6 +1148,26 @@
           "200": {
             "description": "User blocked successfully"
           },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "404": {
             "description": "User not found"
           }
@@ -976,6 +1194,26 @@
           },
           "404": {
             "description": "User not found"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1452,6 +1690,26 @@
           "404": {
             "$ref": "#/components/responses/404NotFound"
           },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -1478,6 +1736,26 @@
           },
           "404": {
             "description": "User not found"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1794,6 +2072,26 @@
             "example": {
               "status": "error",
               "message": "Internal server error"
+            }
+          }
+        }
+      },
+      "429": {
+        "description": "Too Many Requests – Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "fail"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Too many requests from this IP, please try again after 15 minutes."
+                }
+              }
             }
           }
         }
