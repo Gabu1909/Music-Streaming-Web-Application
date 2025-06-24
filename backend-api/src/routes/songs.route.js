@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const songController = require("../controllers/songs.controller");
 const upload = require("../middlewares/upload_combined");
+const ApiError = require("../../api-error");
+
 const validate = require("../middlewares/validate.middleware");
 const {
   createSongSchema,

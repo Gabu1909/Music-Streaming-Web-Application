@@ -18,7 +18,6 @@ async function getDuration(filePath) {
   const metadata = await mm.parseFile(filePath);
   return Number(metadata.format.duration?.toFixed(2)) || null;
 }
-
 async function addSong(req, res, next) {
   try {
     const { title, artist: artistRaw, album: albumName } = req.body;
@@ -30,22 +29,22 @@ async function addSong(req, res, next) {
     const imgUrl = req.files?.cover?.[0]
       ? getImgPath(req.files.cover[0])
       : null;
-
     const artistNames = artistRaw.split(",").map((n) => n.trim());
-    const artistIds = [];
+    const artistObjs = [];
     for (const name of artistNames) {
       const artist = await artistService.findOrCreateArtistByName(name);
       if (!artist?.artist_id)
         return next(new ApiError(500, `Cannot find/create artist: ${name}`));
-      artistIds.push(artist.artist_id);
+      artistObjs.push(artist);
     }
 
     let album_id = null;
     if (albumName) {
       const album = await albumService.findOrCreateAlbumByName(
         albumName,
-        artistIds[0]
+        artistObjs[0].artist_id
       );
+
       if (!album?.album_id)
         return next(new ApiError(404, "Cannot create/find album"));
       album_id = album.album_id;
@@ -53,15 +52,15 @@ async function addSong(req, res, next) {
 
     const song = await songService.createSong({
       title,
-      artist_id: artistIds[0],
+      artist_id: artistObjs[0].artist_id,
       album_id,
       audio_url: audioUrl,
       image_url: imgUrl,
       duration,
     });
 
-    for (const artist_id of artistIds) {
-      await songService.addArtistToSong(song.song_id, artist_id);
+    for (const artist of artistObjs) {
+      await songService.addArtistToSong(song.song_id, artist.artist_id);
     }
 
     res
