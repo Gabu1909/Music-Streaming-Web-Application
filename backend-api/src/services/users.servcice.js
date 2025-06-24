@@ -34,6 +34,7 @@ async function addFavoriteSong(userId, songId) {
     .insert({ user_id: userId, song_id: songId })
     .onConflict(["user_id", "song_id"])
     .ignore();
+  return { user_id: userId, song_id: songId };
 }
 async function removeFavoriteSong(userId, songId) {
   await knex("favorites").where({ user_id: userId, song_id: songId }).del();

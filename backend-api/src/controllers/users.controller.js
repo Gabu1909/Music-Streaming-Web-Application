@@ -1,13 +1,11 @@
 const userService = require("../services/users.servcice");
 const ApiError = require("../../api-error");
 const bcrypt = require("bcrypt");
-<<<<<<< Updated upstream
+
 const JSend = require("../jsend");
-=======
 function getImgPath(file) {
   return `public/uploads/images/${file.filename}`;
 }
->>>>>>> Stashed changes
 async function getAllUsers(req, res, next) {
   try {
     const users = await userService.getAll();
