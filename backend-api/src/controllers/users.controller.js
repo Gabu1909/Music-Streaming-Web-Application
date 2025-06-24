@@ -1,7 +1,10 @@
 const userService = require("../services/users.service");
 const ApiError = require("../../api-error");
 const bcrypt = require("bcrypt");
-
+const JSend = require("../jsend");
+function getImgPath(file) {
+  return `public/uploads/images/${file.filename}`;
+}
 async function getAllUsers(req, res, next) {
   try {
     const users = await userService.getAll();
@@ -24,22 +27,32 @@ async function getUserById(req, res, next) {
 async function updateUser(req, res, next) {
   const { id } = req.params;
 
+  const avatarUrl = req.files?.avatar_url?.[0]
+    ? getImgPath(req.files.avatar_url[0])
+    : null;
+
   try {
     const validatedData = req.validated;
-    const password_hash_new = await bcrypt.hash(validatedData.password, 5);
+
+    const password_hash_new = validatedData.password
+      ? await bcrypt.hash(validatedData.password, 5)
+      : undefined;
+
     const existingUser = await userService.getById(id);
     if (!existingUser) {
       return next(new ApiError(404, "User not found"));
     }
+
     const updatedUserData = {
       username: validatedData.username || existingUser.username,
       email: validatedData.email || existingUser.email,
       password_hash: password_hash_new || existingUser.password_hash,
-      avatar_url: validatedData.avatar_url || existingUser.avatar_url || null,
+      avatar_url: avatarUrl || existingUser.avatar_url || null,
       role: validatedData.role || existingUser.role,
     };
+
     const updatedUser = await userService.update(id, updatedUserData);
-    res.json(updatedUser);
+    res.json({ status: "success", data: updatedUser });
   } catch (err) {
     console.error("Update User Error:", err);
     next(new ApiError(500, "Update user failed"));

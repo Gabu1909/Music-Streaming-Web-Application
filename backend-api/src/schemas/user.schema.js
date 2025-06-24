@@ -8,7 +8,14 @@ const baseUserSchema = z.object({
   }),
 });
 
-const updateUserSchema = baseUserSchema.partial();
+const updateUserSchema = z.object({
+  input: z.object({
+    username: z.string().min(3).optional(),
+    email: z.string().email().optional(),
+    password: z.string().min(6).optional(),
+    role: z.string().optional(),
+  }),
+});
 
 const loginSchema = z.object({
   email: z.string().email(),
