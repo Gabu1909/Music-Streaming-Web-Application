@@ -1,4 +1,4 @@
-const userService = require("../services/users.servcice");
+const userService = require("../services/users.service");
 const authService = require("../services/auth.service");
 const ApiError = require("../../api-error");
 const { loginSchema } = require("../schemas/user.schema");
@@ -6,7 +6,8 @@ const { loginSchema } = require("../schemas/user.schema");
 async function createUser(req, res, next) {
   try {
     const { username, email, password, role } = req.body;
-    const avatar_url = req.file?.path || null;
+    const avatarFile = req.files?.avatar_url?.[0];
+    const avatar_url = avatarFile ? getImgPath(avatarFile) : null;
     const existing = await userService.getByEmail(email);
     if (existing) return next(new ApiError(400, "Email already exists"));
     const password_hash = await authService.hashPassword(password);

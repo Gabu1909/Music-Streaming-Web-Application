@@ -63,12 +63,7 @@ CREATE TABLE ListeningHistory (
     listened_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE ArtistFollowers (
-    user_id INTEGER REFERENCES Users(user_id) ON DELETE CASCADE,
-    artist_id INTEGER REFERENCES Artists(artist_id) ON DELETE CASCADE,
-    followed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (user_id, artist_id)
-);
+
 
 CREATE TABLE SongArtists (
     song_id INTEGER REFERENCES Songs(song_id) ON DELETE CASCADE,

@@ -12,12 +12,10 @@ async function createPlaylistWithSongs(
   if (!is_system && !user_id) {
     throw new ApiError(400, "user_id is required for user playlists");
   }
-
   const songs = await knex("songs").whereIn("song_id", song_ids);
   if (songs.length === 0) {
     throw new ApiError(404, "No songs found with the given song_ids");
   }
-
   const [playlist] = await knex("playlists")
     .insert({
       name,
