@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-const RateLimiter = require("./middlewares/rate_limit");
+const { generalLimiter } = require("./middlewares/rate_limit");
 const JSend = require("./jsend");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("../docs/open-api.json");
@@ -22,9 +22,9 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   return res.json(JSend.success());
 });
-
+app.use("/api", generalLimiter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-app.use("/api", RateLimiter);
+
 app.use("/api/users", usersRouter);
 app.use("/api/songs", songRoutes);
 app.use("/api/albums", albumRoutes);

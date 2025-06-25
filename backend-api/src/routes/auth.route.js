@@ -5,7 +5,7 @@ const multer = require("multer");
 const uploadnone = multer();
 const upload = require("../middlewares/upload_combined");
 const validate = require("../middlewares/validate.middleware");
-
+const { authLimiter } = require("../middlewares/rate_limit");
 const { baseUserSchema } = require("../schemas/user.schema");
 
 router.post(
@@ -14,6 +14,6 @@ router.post(
   validate(baseUserSchema),
   authController.createUser
 );
-router.post("/login", upload.none(), authController.login);
+router.post("/login", authLimiter, upload.none(), authController.login);
 
 module.exports = router;

@@ -8,6 +8,10 @@ const validate = require("../middlewares/validate.middleware");
 const { updateUserSchema } = require("../schemas/user.schema");
 const upload = require("../middlewares/upload_combined");
 const uploadnone = multer();
+const {
+  favoriteLimiter,
+  updateUserLimiter,
+} = require("../middlewares/rate_limit");
 router.get("/", usersController.getAllUsers);
 router.get("/:id", usersController.getUserById);
 
@@ -23,6 +27,7 @@ router.get("/:id/favorites", usersController.getFavoriteSong);
 
 router.delete(
   "/:id/favorites",
+  favoriteLimiter,
   uploadnone.none(),
   validate(favoriteSongSchema),
   usersController.removeFavoriteSong
