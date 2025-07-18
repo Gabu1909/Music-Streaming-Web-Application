@@ -14,6 +14,6 @@ router.post(
   validate(baseUserSchema),
   authController.createUser
 );
-router.post("/login", authLimiter, upload.none(), authController.login);
+router.post("/login", authLimiter, uploadnone.none(), authController.login);
 
 module.exports = router;

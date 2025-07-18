@@ -8,7 +8,6 @@ const usersRouter = require("./routes/users.route");
 const songRoutes = require("./routes/songs.route");
 const albumRoutes = require("./routes/album.route");
 const authRoutes = require("./routes/auth.route");
-const adminRoutes = require("./routes/admin.route");
 const artistRoutes = require("./routes/artists.route");
 const playlistRoutes = require("./routes/playlist.route");
 const app = express();
@@ -24,15 +23,13 @@ app.get("/", (req, res) => {
 });
 app.use("/api", generalLimiter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
 app.use("/api/users", usersRouter);
 app.use("/api/songs", songRoutes);
 app.use("/api/albums", albumRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/artists", artistRoutes);
 app.use("/api/playlists", playlistRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/artists", artistRoutes);
+
 app.use(resourceNotFound);
 app.use(handleError);
 module.exports = app;

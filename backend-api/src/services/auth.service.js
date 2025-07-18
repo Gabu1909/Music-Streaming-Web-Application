@@ -14,25 +14,31 @@ async function comparePassword(password, hash) {
 }
 
 function generateToken(user) {
-  return jwt.sign(
-    {
-      user_id: user.id,
-      email: user.email,
-      role: user.role,
-    },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRES_IN }
-  );
+  const payload = {
+    user_id: user.id,
+    email: user.email,
+    role: user.role,
+  };
+
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 }
+
 
 async function authenticateUser(email, password, userService) {
   const user = await userService.getByEmail(email);
-  if (!user) throw new ApiError(401, "Invalid email or password");
+
+  if (!user) {
+    throw new ApiError(401, "Invalid email or password");
+  }
 
   const isValid = await comparePassword(password, user.password_hash);
-  if (!isValid) throw new ApiError(401, "Invalid email or password");
+
+  if (!isValid) {
+    throw new ApiError(401, "Invalid email or password");
+  }
 
   const token = generateToken(user);
+
   return { token, user };
 }
 
