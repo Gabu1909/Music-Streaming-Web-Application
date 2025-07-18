@@ -1007,7 +1007,7 @@
         }
       }
     },
-    "/api/admin/total": {
+    "/api/users/total": {
       "get": {
         "summary": "Get total counts of songs, users, albums, and artists",
         "description": "Retrieve total number of songs, users, albums, and artists for admin statistics",
@@ -1081,7 +1081,7 @@
       }
     },
 
-    "/api/admin/delete": {
+    "/api/users/delete": {
       "delete": {
         "summary": "Delete all users",
         "description": "Admin-only endpoint to delete all user accounts from the system. Use with extreme caution.",
@@ -1131,7 +1131,7 @@
       }
     },
 
-    "/api/admin/users/{id}/block": {
+    "/api/users/{id}/block": {
       "patch": {
         "summary": "Block user",
         "tags": ["Admin"],
@@ -1175,7 +1175,7 @@
       }
     },
 
-    "/api/admin/users/{id}/unblock": {
+    "/api/users/{id}/unblock": {
       "patch": {
         "summary": "Unblock user",
         "tags": ["Admin"],
@@ -1715,77 +1715,9 @@
           }
         }
       }
-    },
-
-    "/api/admin/users/{id}/block": {
-      "patch": {
-        "summary": "Block user",
-        "tags": ["Admin"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" },
-            "description": "ID of the user to block"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User blocked successfully"
-          },
-          "404": {
-            "description": "User not found"
-          },
-          "429": {
-            "description": "Too Many Requests – Rate limit exceeded",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": "fail"
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Too many requests from this IP, please try again after 15 minutes."
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
-    "/api/admin/users/{id}/unblock": {
-      "patch": {
-        "summary": "Unblock user",
-        "tags": ["Admin"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": { "type": "integer" },
-            "description": "ID of the user to unblock"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User unblocked successfully"
-          },
-          "404": {
-            "description": "User not found"
-          }
-        }
-      }
     }
   },
-  "components": {
+ "components": {
     "schemas": {
       "Song": {
         "type": "object",
@@ -1834,7 +1766,12 @@
             "example": "2025-06-18T10:30:00Z"
           }
         },
-        "required": ["id", "title", "artist", "audioUrl"]
+        "required": [
+          "id",
+          "title",
+          "artist",
+          "audioUrl"
+        ]
       },
       "Artist": {
         "type": "object",
@@ -1867,28 +1804,38 @@
             "example": "2025-06-21T12:00:00Z"
           }
         },
-        "required": ["id", "name"]
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "SuccessResponse": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["success"]
+            "enum": [
+              "success"
+            ]
           },
           "message": {
             "type": "string",
             "example": "Operation completed successfully"
           }
         },
-        "required": ["status", "message"]
+        "required": [
+          "status",
+          "message"
+        ]
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["error"],
+            "enum": [
+              "error"
+            ],
             "description": "Error status"
           },
           "message": {
@@ -1912,19 +1859,31 @@
                   "example": "Title is required"
                 }
               },
-              "required": ["field", "message"]
+              "required": [
+                "field",
+                "message"
+              ]
             },
             "description": "Array of field-specific validation errors"
           }
         },
-        "required": ["status", "message"]
+        "required": [
+          "status",
+          "message"
+        ]
       },
       "User": {
         "type": "object",
         "properties": {
-          "user_id": { "type": "integer" },
-          "username": { "type": "string" },
-          "email": { "type": "string" },
+          "user_id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
           "avatar_url": {
             "type": "string",
             "format": "binary",
@@ -1932,23 +1891,44 @@
             "readOnly": true,
             "description": "Image file URL"
           },
-          "role": { "type": "string" },
-          "created_at": { "type": "string", "format": "date" }
+          "role": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date"
+          }
         }
       },
       "Album": {
         "type": "object",
         "properties": {
-          "title": { "type": "string" },
-          "artist": { "type": "string" },
-          "release_date": { "type": "string", "format": "date" },
-          "cover": { "type": "string", "format": "binary" },
+          "title": {
+            "type": "string"
+          },
+          "artist": {
+            "type": "string"
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "cover": {
+            "type": "string",
+            "format": "binary"
+          },
           "audio_files": {
             "type": "array",
-            "items": { "type": "string", "format": "binary" }
+            "items": {
+              "type": "string",
+              "format": "binary"
+            }
           }
         },
-        "required": ["title", "artist"]
+        "required": [
+          "title",
+          "artist"
+        ]
       },
       "Playlist": {
         "type": "object",
@@ -1993,34 +1973,6 @@
             }
           }
         }
-      },
-      "Artist": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "description": "Auto-generated artist ID",
-            "readOnly": true
-          },
-          "name": {
-            "type": "string",
-            "description": "Artist's name",
-            "maxLength": 255
-          },
-          "bio": {
-            "type": "string",
-            "description": "Short biography of the artist",
-            "maxLength": 1000
-          },
-          "avatar_url": { "type": "string", "format": "binary" },
-          "createdAt": {
-            "type": "string",
-            "format": "date",
-            "description": "Timestamp when the artist was created",
-            "readOnly": true
-          }
-        },
-        "required": ["id", "name"]
       }
     },
     "responses": {
@@ -2123,32 +2075,19 @@
         "schema": {
           "type": "integer"
         }
-      },
-      "limitParam": {
-        "name": "limit",
-        "description": "Number of records per page",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "default": 5,
-          "minimum": 1,
-          "maximum": 100
-        },
-        "required": false,
-        "example": 10
-      },
-      "pageParam": {
-        "name": "page",
-        "description": "Page number of records",
-        "in": "query",
-        "schema": {
-          "type": "integer",
-          "default": 1,
-          "minimum": 1
-        },
-        "required": false,
-        "example": 1
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     }
-  }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
 }
