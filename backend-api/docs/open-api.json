@@ -18,26 +18,12 @@
   "paths": {
     "/api/songs": {
       "get": {
-        "summary": "Get songs with filtering and pagination",
+        "summary": "Get all songs in store",
         "description": "Retrieve a paginated list of songs with optional title filtering",
-        "operationId": "getSongsByFilter",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "title",
-            "schema": {
-              "type": "string"
-            },
-            "description": "Filter songs by title (partial match)"
-          },
-          {
-            "$ref": "#/components/parameters/limitParam"
-          },
-          {
-            "$ref": "#/components/parameters/pageParam"
-          }
+        "operationId": "getAllSongs",
+        "tags": [
+          "Songs"
         ],
-        "tags": ["Songs"],
         "responses": {
           "200": {
             "description": "Successfully retrieved songs list",
@@ -48,7 +34,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"]
+                      "enum": [
+                        "success"
+                      ]
                     },
                     "data": {
                       "type": "object",
@@ -77,16 +65,42 @@
                           }
                         }
                       },
-                      "required": ["songs", "metadata"]
+                      "required": [
+                        "songs",
+                        "metadata"
+                      ]
                     }
                   },
-                  "required": ["status", "data"]
+                  "required": [
+                    "status",
+                    "data"
+                  ]
                 }
               }
             }
           },
           "400": {
             "$ref": "#/components/responses/400BadRequest"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
@@ -127,14 +141,20 @@
                     }
                   },
                   {
-                    "required": ["audio_files", "title", "artist"]
+                    "required": [
+                      "audio_files",
+                      "title",
+                      "artist"
+                    ]
                   }
                 ]
               }
             }
           }
         },
-        "tags": ["Songs"],
+        "tags": [
+          "Songs"
+        ],
         "responses": {
           "201": {
             "description": "Song created successfully",
@@ -145,7 +165,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"]
+                      "enum": [
+                        "success"
+                      ]
                     },
                     "data": {
                       "type": "object",
@@ -154,10 +176,15 @@
                           "$ref": "#/components/schemas/Song"
                         }
                       },
-                      "required": ["song"]
+                      "required": [
+                        "song"
+                      ]
                     }
                   },
-                  "required": ["status", "data"]
+                  "required": [
+                    "status",
+                    "data"
+                  ]
                 }
               }
             }
@@ -165,7 +192,26 @@
           "400": {
             "$ref": "#/components/responses/400BadRequest"
           },
-
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -175,10 +221,32 @@
         "summary": "Delete all songs",
         "description": "Delete all songs from the database",
         "operationId": "deleteAllSongs",
-        "tags": ["Songs"],
+        "tags": [
+          "Songs"
+        ],
         "responses": {
           "200": {
             "$ref": "#/components/responses/200Success"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
@@ -196,7 +264,9 @@
             "$ref": "#/components/parameters/songIdParam"
           }
         ],
-        "tags": ["Songs"],
+        "tags": [
+          "Songs"
+        ],
         "responses": {
           "200": {
             "description": "Successfully retrieved song",
@@ -207,7 +277,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"]
+                      "enum": [
+                        "success"
+                      ]
                     },
                     "data": {
                       "type": "object",
@@ -216,10 +288,15 @@
                           "$ref": "#/components/schemas/Song"
                         }
                       },
-                      "required": ["song"]
+                      "required": [
+                        "song"
+                      ]
                     }
                   },
-                  "required": ["status", "data"]
+                  "required": [
+                    "status",
+                    "data"
+                  ]
                 }
               }
             }
@@ -235,7 +312,6 @@
           }
         }
       },
-
       "put": {
         "summary": "Update song by ID",
         "description": "Update an existing song by its ID",
@@ -275,12 +351,18 @@
                     "format": "binary"
                   }
                 },
-                "required": ["title", "artist", "audio_files"]
+                "required": [
+                  "title",
+                  "artist",
+                  "audio_files"
+                ]
               }
             }
           }
         },
-        "tags": ["Songs"],
+        "tags": [
+          "Songs"
+        ],
         "responses": {
           "200": {
             "description": "Song updated successfully",
@@ -291,7 +373,9 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "enum": ["success"]
+                      "enum": [
+                        "success"
+                      ]
                     },
                     "data": {
                       "type": "object",
@@ -300,10 +384,15 @@
                           "$ref": "#/components/schemas/Song"
                         }
                       },
-                      "required": ["song"]
+                      "required": [
+                        "song"
+                      ]
                     }
                   },
-                  "required": ["status", "data"]
+                  "required": [
+                    "status",
+                    "data"
+                  ]
                 }
               }
             }
@@ -314,7 +403,26 @@
           "404": {
             "$ref": "#/components/responses/404NotFound"
           },
-
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -329,7 +437,9 @@
             "$ref": "#/components/parameters/songIdParam"
           }
         ],
-        "tags": ["Songs"],
+        "tags": [
+          "Songs"
+        ],
         "responses": {
           "200": {
             "$ref": "#/components/responses/200Success"
@@ -340,6 +450,26 @@
           "404": {
             "$ref": "#/components/responses/404NotFound"
           },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -349,7 +479,9 @@
     "/api/users/": {
       "get": {
         "summary": "Get all users",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
             "description": "List of users",
@@ -380,7 +512,9 @@
             }
           }
         ],
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
             "description": "A user",
@@ -413,21 +547,31 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "username": { "type": "string" },
-                  "email": { "type": "string" },
-                  "password": { "type": "string" },
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
                   "avatar_url": {
                     "type": "string",
                     "format": "binary",
                     "maxLength": 500
                   },
-                  "role": { "type": "string" }
+                  "role": {
+                    "type": "string"
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
             "description": "User updated"
@@ -446,7 +590,9 @@
             }
           }
         ],
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "responses": {
           "200": {
             "description": "User deleted"
@@ -461,7 +607,9 @@
           {
             "in": "path",
             "name": "id",
-            "schema": { "type": "integer" },
+            "schema": {
+              "type": "integer"
+            },
             "required": true
           }
         ],
@@ -472,13 +620,37 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Song" }
+                  "items": {
+                    "$ref": "#/components/schemas/Song"
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags": ["Users"]
+        "tags": [
+          "Users"
+        ]
       },
       "post": {
         "summary": "Add favorite song for user",
@@ -486,7 +658,9 @@
           {
             "in": "path",
             "name": "id",
-            "schema": { "type": "integer" },
+            "schema": {
+              "type": "integer"
+            },
             "required": true
           }
         ],
@@ -497,9 +671,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "song_id": { "type": "integer" }
+                  "song_id": {
+                    "type": "integer"
+                  }
                 },
-                "required": ["song_id"]
+                "required": [
+                  "song_id"
+                ]
               }
             }
           }
@@ -512,7 +690,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "success" },
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
                     "message": {
                       "type": "string",
                       "example": "Song added to favorites"
@@ -529,7 +710,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "fail" },
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
                     "message": {
                       "type": "string",
                       "example": "Invalid song_id"
@@ -546,8 +730,34 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "fail" },
-                    "message": { "type": "string", "example": "Song not found" }
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Song not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
                   }
                 }
               }
@@ -560,7 +770,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": { "type": "string", "example": "error" },
+                    "status": {
+                      "type": "string",
+                      "example": "error"
+                    },
                     "message": {
                       "type": "string",
                       "example": "Internal Server Error"
@@ -571,16 +784,22 @@
             }
           }
         },
-        "tags": ["Users"]
+        "tags": [
+          "Users"
+        ]
       },
       "delete": {
         "summary": "Remove a song from user's favorites",
-        "tags": ["Users"],
+        "tags": [
+          "Users"
+        ],
         "parameters": [
           {
             "in": "path",
             "name": "id",
-            "schema": { "type": "integer" },
+            "schema": {
+              "type": "integer"
+            },
             "required": true
           }
         ],
@@ -596,7 +815,9 @@
                     "example": 42
                   }
                 },
-                "required": ["song_id"]
+                "required": [
+                  "song_id"
+                ]
               }
             }
           }
@@ -627,14 +848,37 @@
           },
           "401": {
             "description": "Unauthorized"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
     },
+    
     "/api/albums": {
       "get": {
         "summary": "Get all albums",
-        "tags": ["Albums"],
+        "tags": [
+          "Albums"
+        ],
         "responses": {
           "200": {
             "description": "List of albums",
@@ -653,7 +897,9 @@
       },
       "post": {
         "summary": "Create a new album",
-        "tags": ["Albums"],
+        "tags": [
+          "Albums"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -674,6 +920,80 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/albums/{id}/songs": {
+      "get": {
+        "summary": "Get album and its songs by ID",
+        "tags": [
+          "Albums"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "Album ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Album with songs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "album": {
+                          "$ref": "#/components/schemas/Album"
+                        },
+                        "songs": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Song"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Album not found"
           }
         }
       }
@@ -681,7 +1001,9 @@
     "/api/albums/{id}": {
       "get": {
         "summary": "Get album details by ID",
-        "tags": ["Albums"],
+        "tags": [
+          "Albums"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -710,7 +1032,9 @@
       },
       "put": {
         "summary": "Update album by ID",
-        "tags": ["Albums"],
+        "tags": [
+          "Albums"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -749,7 +1073,9 @@
       },
       "delete": {
         "summary": "Delete album by ID",
-        "tags": ["Albums"],
+        "tags": [
+          "Albums"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -773,24 +1099,38 @@
     "/api/auth/register": {
       "post": {
         "summary": "Create a new account",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["username", "email", "password"],
+                "required": [
+                  "username",
+                  "email",
+                  "password"
+                ],
                 "properties": {
-                  "username": { "type": "string" },
-                  "email": { "type": "string" },
-                  "password": { "type": "string" },
+                  "username": {
+                    "type": "string"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  },
                   "avatar_url": {
                     "type": "string",
                     "format": "binary",
                     "maxLength": 500
                   },
-                  "role": { "type": "string" }
+                  "role": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -806,17 +1146,26 @@
     "/api/auth/login": {
       "post": {
         "summary": "Log in account",
-        "tags": ["Auth"],
+        "tags": [
+          "Auth"
+        ],
         "requestBody": {
           "required": true,
           "content": {
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": ["email", "password"],
+                "required": [
+                  "email",
+                  "password"
+                ],
                 "properties": {
-                  "email": { "type": "string" },
-                  "password": { "type": "string" }
+                  "email": {
+                    "type": "string"
+                  },
+                  "password": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -829,10 +1178,246 @@
         }
       }
     },
+    "/api/users/total": {
+      "get": {
+        "summary": "Get total counts of songs, users, albums, and artists",
+        "description": "Retrieve total number of songs, users, albums, and artists for admin statistics",
+        "operationId": "getTotalCounts",
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved total counts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "success"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "totalSongs": {
+                          "type": "integer"
+                        },
+                        "totalUsers": {
+                          "type": "integer"
+                        },
+                        "totalAlbums": {
+                          "type": "integer"
+                        },
+                        "totalArtists": {
+                          "type": "integer"
+                        }
+                      },
+                      "required": [
+                        "totalSongs",
+                        "totalUsers",
+                        "totalAlbums",
+                        "totalArtists"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/users/delete": {
+      "delete": {
+        "summary": "Delete all users",
+        "description": "Admin-only endpoint to delete all user accounts from the system. Use with extreme caution.",
+        "operationId": "deleteAllUsers",
+        "tags": [
+          "Admin"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully deleted all users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "All users deleted successfully"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Could not delete users"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "message"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/block": {
+      "patch": {
+        "summary": "Block user",
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the user to block"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User blocked successfully"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/api/users/{id}/unblock": {
+      "patch": {
+        "summary": "Unblock user",
+        "tags": [
+          "Admin"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the user to unblock"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User unblocked successfully"
+          },
+          "404": {
+            "description": "User not found"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/playlists": {
       "post": {
         "summary": "Create a new playlist",
-        "tags": ["Playlists"],
+        "tags": [
+          "Playlists"
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -840,29 +1425,53 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string" },
-                  "user_id": { "type": "integer", "nullable": true },
-                  "is_public": { "type": "boolean" },
-                  "is_system": { "type": "boolean" },
+                  "name": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "integer",
+                    "nullable": true
+                  },
+                  "is_public": {
+                    "type": "boolean"
+                  },
+                  "is_system": {
+                    "type": "boolean"
+                  },
                   "song_ids": {
                     "type": "array",
-                    "items": { "type": "integer" }
+                    "items": {
+                      "type": "integer"
+                    }
                   },
-                  "cover": { "type": "string", "format": "binary" }
+                  "cover": {
+                    "type": "string",
+                    "format": "binary"
+                  }
                 },
-                "required": ["name", "is_system", "song_ids"]
+                "required": [
+                  "name",
+                  "is_system",
+                  "song_ids"
+                ]
               }
             }
           }
         },
         "responses": {
-          "201": { "description": "Playlist created successfully" },
-          "400": { "description": "Validation error" }
+          "201": {
+            "description": "Playlist created successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          }
         }
       },
       "get": {
         "summary": "Get all playlists",
-        "tags": ["Playlists"],
+        "tags": [
+          "Playlists"
+        ],
         "responses": {
           "200": {
             "description": "List of playlists",
@@ -870,7 +1479,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Playlist" }
+                  "items": {
+                    "$ref": "#/components/schemas/Playlist"
+                  }
                 }
               }
             }
@@ -879,22 +1490,30 @@
       },
       "delete": {
         "summary": "Delete all playlists",
-        "tags": ["Playlists"],
+        "tags": [
+          "Playlists"
+        ],
         "responses": {
-          "200": { "description": "All playlists deleted" }
+          "200": {
+            "description": "All playlists deleted"
+          }
         }
       }
     },
     "/api/playlists/{id}": {
       "put": {
         "summary": "Update a playlist",
-        "tags": ["Playlists"],
+        "tags": [
+          "Playlists"
+        ],
         "parameters": [
           {
             "name": "id",
             "in": "path",
             "required": true,
-            "schema": { "type": "integer" }
+            "schema": {
+              "type": "integer"
+            }
           }
         ],
         "requestBody": {
@@ -904,30 +1523,52 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "name": { "type": "string" },
-                  "user_id": { "type": "integer", "nullable": true },
-                  "is_public": { "type": "boolean" },
-                  "is_system": { "type": "boolean" },
-                  "song_ids": {
-                    "type": "array",
-                    "items": { "type": "integer" },
+                  "name": {
+                    "type": "string"
+                  },
+                  "user_id": {
+                    "type": "integer",
                     "nullable": true
                   },
-                  "cover": { "type": "string", "format": "binary" }
+                  "is_public": {
+                    "type": "boolean"
+                  },
+                  "is_system": {
+                    "type": "boolean"
+                  },
+                  "song_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "integer"
+                    },
+                    "nullable": true
+                  },
+                  "cover": {
+                    "type": "string",
+                    "format": "binary"
+                  }
                 },
-                "required": ["name"]
+                "required": [
+                  "name"
+                ]
               }
             }
           }
         },
         "responses": {
-          "200": { "description": "Playlist updated successfully" },
-          "400": { "description": "Validation error" }
+          "200": {
+            "description": "Playlist updated successfully"
+          },
+          "400": {
+            "description": "Validation error"
+          }
         }
       },
       "delete": {
         "summary": "Delete a playlist by ID",
-        "tags": ["Playlists"],
+        "tags": [
+          "Playlists"
+        ],
         "parameters": [
           {
             "name": "id",
@@ -946,7 +1587,9 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "items": { "$ref": "#/components/schemas/Playlist" }
+                  "items": {
+                    "$ref": "#/components/schemas/Playlist"
+                  }
                 }
               }
             }
@@ -970,6 +1613,715 @@
                 }
               }
             }
+          }
+        }
+      },
+      "get": {
+        "summary": "Get a playlist by ID",
+        "tags": [
+          "Playlists"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the playlist to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Playlist data retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "name": {
+                          "type": "string"
+                        },
+                        "user_id": {
+                          "type": "integer",
+                          "nullable": true
+                        },
+                        "is_public": {
+                          "type": "boolean"
+                        },
+                        "is_system": {
+                          "type": "boolean"
+                        },
+                        "cover_url": {
+                          "type": "string",
+                          "format": "uri",
+                          "nullable": true
+                        },
+                        "songs": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "artist": {
+                                "type": "string"
+                              },
+                              "duration": {
+                                "type": "number"
+                              },
+                              "audio_url": {
+                                "type": "string",
+                                "format": "uri",
+                                "nullable": true
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Playlist not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Playlist not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/artists/{id}/songs": {
+      "get": {
+        "summary": "Get all songs by artist ID",
+        "description": "Retrieve all songs by a specific artist",
+        "operationId": "getSongsByArtistId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the artist"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "release_date",
+                "popularity",
+                "title",
+                "duration"
+              ],
+              "default": "release_date"
+            },
+            "description": "Sort songs by field"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "description": "Sort order"
+          }
+        ],
+        "tags": [
+          "Artists",
+          "Songs"
+        ],
+        "responses": {
+          "200": {
+            "description": "Songs retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "songs": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Song"
+                          }
+                        },
+                        "total_songs": {
+                          "type": "integer"
+                        },
+                        "artist_info": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "image": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/artists/{id}/albums": {
+      "get": {
+        "summary": "Get all albums by artist ID",
+        "description": "Retrieve all albums by a specific artist",
+        "operationId": "getAlbumsByArtistId",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the artist"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "release_date",
+                "title",
+                "total_tracks"
+              ],
+              "default": "release_date"
+            },
+            "description": "Sort albums by field"
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "asc",
+                "desc"
+              ],
+              "default": "desc"
+            },
+            "description": "Sort order"
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "album",
+                "single",
+                "ep",
+                "compilation"
+              ]
+            },
+            "description": "Filter by album type"
+          }
+        ],
+        "tags": [
+          "Artists",
+          "Albums"
+        ],
+        "responses": {
+          "200": {
+            "description": "Albums retrieved successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "albums": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Album"
+                          }
+                        },
+                        "total_albums": {
+                          "type": "integer"
+                        },
+                        "artist_info": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "integer"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "image": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/artists": {
+      "post": {
+        "summary": "Create a new artist",
+        "description": "Create a new artist with name, bio, and avatar URL",
+        "operationId": "createArtist",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 255,
+                    "description": "Artist's full name"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "Short biography of the artist"
+                  },
+                  "avatar_url": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "Artists"
+        ],
+        "responses": {
+          "201": {
+            "description": "Artist created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "success"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artist": {
+                          "$ref": "#/components/schemas/Artist"
+                        }
+                      },
+                      "required": [
+                        "artist"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete all artists",
+        "description": "Permanently delete all artists from the database",
+        "operationId": "deleteAllArtists",
+        "tags": [
+          "Artists"
+        ],
+        "responses": {
+          "200": {
+            "description": "All artists deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "success"
+                      ]
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "All artists have been deleted"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "message"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "get": {
+        "summary": "Get all artists",
+        "description": "Retrieve a paginated list of artists with optional name filtering",
+        "operationId": "getAllArtist",
+        "tags": [
+          "Artists"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved artists list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "success"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artists": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Artist"
+                          }
+                        },
+                        "metadata": {
+                          "type": "object",
+                          "properties": {
+                            "totalRecords": {
+                              "type": "integer"
+                            },
+                            "page": {
+                              "type": "integer"
+                            },
+                            "limit": {
+                              "type": "integer"
+                            },
+                            "totalPages": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      },
+                      "required": [
+                        "artists",
+                        "metadata"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      }
+    },
+    "/api/artists/{id}": {
+      "get": {
+        "summary": "Get artist by ID",
+        "description": "Retrieve an artist by their unique ID",
+        "operationId": "getArtistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the artist to retrieve"
+          }
+        ],
+        "tags": [
+          "Artists"
+        ],
+        "responses": {
+          "200": {
+            "description": "Artist found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artist": {
+                          "$ref": "#/components/schemas/Artist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update artist by ID",
+        "description": "Update an existing artist (including file upload for avatar_url)",
+        "operationId": "updateArtistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the artist to update"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "Name of the artist"
+                  },
+                  "bio": {
+                    "type": "string",
+                    "description": "Biography of the artist"
+                  },
+                  "avatar_url": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Avatar image file"
+                  }
+                },
+                "required": [
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "tags": [
+          "Artists"
+        ],
+        "responses": {
+          "200": {
+            "description": "Artist updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "artist": {
+                          "$ref": "#/components/schemas/Artist"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete artist by ID",
+        "description": "Remove an artist from the database by their ID",
+        "operationId": "deleteArtistById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            },
+            "description": "ID of the artist to delete"
+          }
+        ],
+        "tags": [
+          "Artists"
+        ],
+        "responses": {
+          "200": {
+            "description": "Artist deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFound"
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
           }
         }
       }
@@ -999,7 +2351,6 @@
             "type": "string",
             "nullable": true
           },
-
           "audioUrl": {
             "type": "string",
             "format": "binary",
@@ -1015,7 +2366,7 @@
             "description": "Image file URL"
           },
           "duration": {
-            "type": "float"
+            "type": "number"
           },
           "createdAt": {
             "type": "string",
@@ -1025,28 +2376,76 @@
             "example": "2025-06-18T10:30:00Z"
           }
         },
-        "required": ["id", "title", "artist", "audioUrl"]
+        "required": [
+          "id",
+          "title",
+          "artist",
+          "audioUrl"
+        ]
+      },
+      "Artist": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Auto-generated artist ID",
+            "readOnly": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Artist's name",
+            "maxLength": 255
+          },
+          "bio": {
+            "type": "string",
+            "description": "Short biography of the artist",
+            "maxLength": 1000
+          },
+          "avatar_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL to the artist's avatar image"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp when the artist was created",
+            "readOnly": true,
+            "example": "2025-06-21T12:00:00Z"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
       },
       "SuccessResponse": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["success"]
+            "enum": [
+              "success"
+            ]
           },
           "message": {
             "type": "string",
             "example": "Operation completed successfully"
           }
         },
-        "required": ["status", "message"]
+        "required": [
+          "status",
+          "message"
+        ]
       },
       "ErrorResponse": {
         "type": "object",
         "properties": {
           "status": {
             "type": "string",
-            "enum": ["error"],
+            "enum": [
+              "error"
+            ],
             "description": "Error status"
           },
           "message": {
@@ -1070,19 +2469,31 @@
                   "example": "Title is required"
                 }
               },
-              "required": ["field", "message"]
+              "required": [
+                "field",
+                "message"
+              ]
             },
             "description": "Array of field-specific validation errors"
           }
         },
-        "required": ["status", "message"]
+        "required": [
+          "status",
+          "message"
+        ]
       },
       "User": {
         "type": "object",
         "properties": {
-          "user_id": { "type": "integer" },
-          "username": { "type": "string" },
-          "email": { "type": "string" },
+          "user_id": {
+            "type": "integer"
+          },
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
           "avatar_url": {
             "type": "string",
             "format": "binary",
@@ -1090,23 +2501,44 @@
             "readOnly": true,
             "description": "Image file URL"
           },
-          "role": { "type": "string" },
-          "created_at": { "type": "string", "format": "date" }
+          "role": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date"
+          }
         }
       },
       "Album": {
         "type": "object",
         "properties": {
-          "title": { "type": "string" },
-          "artist": { "type": "string" },
-          "release_date": { "type": "string", "format": "date" },
-          "cover": { "type": "string", "format": "binary" },
+          "title": {
+            "type": "string"
+          },
+          "artist": {
+            "type": "string"
+          },
+          "release_date": {
+            "type": "string",
+            "format": "date"
+          },
+          "cover": {
+            "type": "string",
+            "format": "binary"
+          },
           "audio_files": {
             "type": "array",
-            "items": { "type": "string", "format": "binary" }
+            "items": {
+              "type": "string",
+              "format": "binary"
+            }
           }
         },
-        "required": ["title", "artist"]
+        "required": [
+          "title",
+          "artist"
+        ]
       },
       "Playlist": {
         "type": "object",
@@ -1152,6 +2584,7 @@
           }
         }
       }
+      
     },
     "responses": {
       "200Success": {
@@ -1192,7 +2625,6 @@
           }
         }
       },
-
       "500InternalServerError": {
         "description": "Internal Server Error - Unexpected server error",
         "content": {
@@ -1203,6 +2635,26 @@
             "example": {
               "status": "error",
               "message": "Internal server error"
+            }
+          }
+        }
+      },
+      "429": {
+        "description": "Too Many Requests – Rate limit exceeded",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "status": {
+                  "type": "string",
+                  "example": "fail"
+                },
+                "message": {
+                  "type": "string",
+                  "example": "Too many requests from this IP, please try again after 15 minutes."
+                }
+              }
             }
           }
         }
@@ -1235,6 +2687,18 @@
           "type": "integer"
         }
       }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
     }
-  }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ]
 }
