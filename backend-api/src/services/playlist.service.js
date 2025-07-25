@@ -1,8 +1,8 @@
 const knex = require("../database/knex");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 
 function getCoverUrl(file) {
-  return `public/uploads/images/${file.filename}`;
+  return `/uploads/img/${file.filename}`;
 }
 
 async function createPlaylistWithSongs(
@@ -18,13 +18,29 @@ async function createPlaylistWithSongs(
     throw new ApiError(404, "No songs found with the given song_ids");
   }
 
+  let image_url = coverFile ? getCoverUrl(coverFile) : null;
+
+  if (!image_url) {
+    if (is_system) {
+      const artist = await knex("artists")
+        .where("artist_id", songs[0].artist_id)
+        .first();
+      image_url = artist?.img_url ?? null;
+    } else {
+      const album = await knex("albums")
+        .where("album_id", songs[0].album_id)
+        .first();
+      image_url = album?.cover_url ?? null;
+    }
+  }
+
   const [playlist] = await knex("playlists")
     .insert({
       name,
       user_id: is_system ? null : user_id,
       is_public,
       is_system,
-      image_url: coverFile ? getCoverUrl(coverFile) : null,
+      image_url,
     })
     .returning([
       "playlist_id",
@@ -47,6 +63,7 @@ async function createPlaylistWithSongs(
     songs: songs.map((s) => ({ song_id: s.song_id, title: s.title })),
   };
 }
+
 
 async function getAllPlaylists() {
   return await knex("playlists").select("*");
@@ -106,11 +123,55 @@ async function getSongIdsByPlaylist(id) {
 async function deletePlaylistById(id) {
   return await knex("playlists").where({ playlist_id: id }).del();
 }
+async function getPlaylistById(id) {
+  const playlist = await knex("playlists")
+    .where({ playlist_id: id })
+    .first();
 
+  if (!playlist) {
+    throw new ApiError(404, "Playlist not found");
+  }
+
+  const songs = await knex("songs")
+    .join("playlistsongs", "songs.song_id", "playlistsongs.song_id")
+    .where("playlistsongs.playlist_id", id)
+    .select(
+      "songs.song_id",
+      "songs.title",
+      "songs.artist_id",
+      "songs.duration",
+      "songs.audio_url" 
+    );
+
+  return {
+    status: "success", 
+    data: {
+      ...playlist,
+      songs,
+    },
+  };
+}
+async function find({ query }) {
+  if (!query) return { data: [] };
+  const playlists = await knex("playlists")
+    .select(
+      "playlists.playlist_id",
+      "playlists.name",
+      "playlists.image_url",
+      "users.username as creator_name",
+      knex.raw("(SELECT COUNT(*) FROM playlistsongs WHERE playlist_id = playlists.playlist_id) as song_count")
+    )
+    .join("users", "playlists.user_id", "users.user_id")
+    .whereRaw("LOWER(playlists.name) LIKE ?", [`%${query.toLowerCase()}%`])
+    .limit(10);
+  return { data: playlists };
+}
 module.exports = {
+  find, 
   createPlaylistWithSongs,
   getAllPlaylists,
   updatePlaylist,
   deletePlaylistById,
+  getPlaylistById,
   deleteAllPlaylists,
 };
