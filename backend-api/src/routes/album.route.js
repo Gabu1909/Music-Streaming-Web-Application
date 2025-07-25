@@ -5,7 +5,9 @@ const upload = require("../middlewares/upload_combined.js");
 const validate = require("../middlewares/validate.middleware.js");
 const { createAlbumSchema } = require("../schemas/album.schema.js");
 
-router.get("/", AlbumController.getAllAlbum);
+
+router.get("/", AlbumController.getAllAlbums);
+
 router.post(
   "/",
   upload.fields([
@@ -16,6 +18,7 @@ router.post(
   AlbumController.createAlbum
 );
 
+
 router.put(
   "/:id",
   upload.fields([
@@ -25,7 +28,10 @@ router.put(
   validate(createAlbumSchema),
   AlbumController.updateAlbum
 );
-router.get("/:id", AlbumController.getByAlbumId);
+
+router.get("/:id", AlbumController.getAlbumById);
+
 router.delete("/:id", AlbumController.deleteAlbum);
+router.get("/:id/songs", AlbumController.getSongsByAlbum);
 
 module.exports = router;

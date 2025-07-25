@@ -2,12 +2,13 @@ const express = require("express");
 const router = express.Router();
 const songController = require("../controllers/songs.controller");
 const upload = require("../middlewares/upload_combined");
+
 const validate = require("../middlewares/validate.middleware");
 const {
   createSongSchema,
   updateSongSchema,
 } = require("../schemas/song.schema");
-router.get("/", songController.getSongsByFilter);
+router.get("/", songController.getAllSongs);
 router.post(
   "/",
   upload.fields([
@@ -18,7 +19,7 @@ router.post(
   songController.addSong
 );
 router.get("/:id", songController.getSongById);
-
+router.delete("/", songController.deleteAllSongs);
 router.put(
   "/:id",
   upload.fields([
@@ -28,7 +29,6 @@ router.put(
   validate(updateSongSchema),
   songController.updateSong
 );
-router.get("/", songController.getSongsByFilter);
 
 router.delete("/:id", songController.deleteSong);
 
