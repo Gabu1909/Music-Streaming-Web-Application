@@ -12,4 +12,4 @@ Semester 3, Academic year: 2024-2025
 
 **Student Name 2**: Tran Thi Kim Phung
 
-**Class Number**: CT303HM01
+**Class Number**: CT313HM01
