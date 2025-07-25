@@ -1,37 +1,39 @@
 const songService = require("../services/songs.service");
-const userService = require("../services/users.servcice");
+const userService = require("../services/users.service");
 const albumService = require("../services/albums.service");
+const artistService = require("../services/artists.service");
+const JSend = require("../jsend");
+const ApiError = require("../api-error");
 
 async function getTotalStats(req, res, next) {
   try {
-    const [totalSongs, totalUsers, totalAlbums] = await Promise.all([
-      songService.countSongs(),
-      userService.countUsers(),
-      albumService.countAlbums(),
-    ]);
+    const [totalSongs, totalUsers, totalAlbums, totalArtists] =
+      await Promise.all([
+        songService.countSongs(),
+        userService.countUsers(),
+        albumService.countAlbums(),
+        artistService.countArtists(),
+      ]);
 
-    res.json({
-      status: "success",
-      data: {
+    res.json(
+      JSend.success({
         totalSongs,
         totalUsers,
         totalAlbums,
-      },
-    });
+        totalArtists,
+      })
+    );
   } catch (error) {
-    next(error);
+    next(new ApiError(500, error.message));
   }
 }
 
 async function deleteAllUsers(req, res, next) {
   try {
-    await userService.deleteAllUsers(); // Gọi hàm xóa toàn bộ user
-    res.json({
-      status: "success",
-      message: "All users have been deleted successfully",
-    });
+    await userService.deleteAllUsers();
+    res.json(JSend.success("All users have been deleted successfully"));
   } catch (error) {
-    next(error);
+    next(new ApiError(500, error.message));
   }
 }
 
@@ -41,15 +43,13 @@ async function blockUser(req, res, next) {
     const user = await userService.getById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "User not found" });
+      return res.status(404).json(JSend.error("User not found"));
     }
 
     await userService.blockUser(userId);
-    res.json({ status: "success", message: `User ${userId} has been blocked` });
+    res.json(JSend.success(`User ${userId} has been blocked`));
   } catch (error) {
-    next(error);
+    next(new ApiError(500, error.message));
   }
 }
 
@@ -59,21 +59,15 @@ async function unblockUser(req, res, next) {
     const user = await userService.getById(userId);
 
     if (!user) {
-      return res
-        .status(404)
-        .json({ status: "error", message: "User not found" });
+      return res.status(404).json(JSend.error("User not found"));
     }
 
     await userService.unblockUser(userId);
-    res.json({
-      status: "success",
-      message: `User ${userId} has been unblocked`,
-    });
+    res.json(JSend.success(`User ${userId} has been unblocked`));
   } catch (error) {
-    next(error);
+    next(new ApiError(500, error.message));
   }
 }
-
 module.exports = {
   getTotalStats,
   deleteAllUsers,

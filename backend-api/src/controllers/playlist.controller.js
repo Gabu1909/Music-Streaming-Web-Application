@@ -59,10 +59,28 @@ async function deletePlaylistById(req, res, next) {
   }
 }
 
+
+async function getPlaylistById(req, res, next) {
+  try {
+    const { id } = req.params;
+    const playlist = await playlistService.getPlaylistById(id);
+
+    if (!playlist) {
+      return res.status(404).json(JSend.fail("Playlist not found"));
+    }
+
+    res.status(200).json(JSend.success(playlist));
+  } catch (err) {
+    next(err);
+  }
+}
+
+
 module.exports = {
   createPlaylist,
   getAllPlaylists,
   deleteAllPlaylists,
   updatePlaylist,
   deletePlaylistById,
+  getPlaylistById,
 };

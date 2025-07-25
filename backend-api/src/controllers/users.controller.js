@@ -1,16 +1,17 @@
-const userService = require("../services/users.servcice");
-const ApiError = require("../../api-error");
-const bcrypt = require("bcrypt");
+const userService = require("../services/users.service");
 
+
+const ApiError = require("../api-error");
+const bcrypt = require("bcrypt");
 const JSend = require("../jsend");
 function getImgPath(file) {
-  return `public/uploads/images/${file.filename}`;
+  return `/uploads/img/${file.filename}`;
 }
 async function getAllUsers(req, res, next) {
   try {
     const users = await userService.getAll();
     res.json({ status: "success", data: users });
-  } catch (err) {
+  } catch {
     next(new ApiError(500, "Fetch users failed"));
   }
 }
@@ -20,7 +21,7 @@ async function getUserById(req, res, next) {
     const user = await userService.getById(req.params.id);
     if (!user) return next(new ApiError(404, "User not found"));
     res.json({ status: "success", data: user });
-  } catch (err) {
+  } catch {
     return next(new ApiError(500, "Get user failed"));
   }
 }
@@ -64,7 +65,7 @@ async function deleteUser(req, res, next) {
   try {
     await userService.remove(req.params.id);
     res.json({ status: "success", message: "User deleted" });
-  } catch (err) {
+  } catch {
     next(new ApiError(500, "Delete user failed"));
   }
 }
@@ -77,6 +78,7 @@ async function addFavoriteSong(req, res, next) {
 
     res.status(200).json(JSend.success(result));
   } catch (err) {
+    console.error("Add Favorite Song Error:", err);
     return next(new ApiError(500, "Internal Server Error"));
   }
 }
@@ -87,10 +89,11 @@ async function removeFavoriteSong(req, res, next) {
     const { song_id } = req.validated;
 
     await userService.removeFavoriteSong(id, song_id);
-    return res
-      .status(200)
-      .json(JSend.success({ message: "Song removed from favorites" }));
-  } catch (err) {
+    return res.status(200).json({
+      status: "success",
+      message: "Song removed to favorites",
+    });
+  } catch {
     return next(new ApiError(500, "Internal Server Error"));
   }
 }
@@ -99,7 +102,10 @@ async function getFavoriteSong(req, res, next) {
     const { id } = req.params;
     const userId = Number(id);
     if (isNaN(userId) || userId <= 0) {
-      return res.status(404).json(JSend.error({ message: "Invalid User" }));
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid user ID",
+      });
     }
 
     const favorites = await userService.getFavSong(userId);
@@ -113,6 +119,8 @@ async function getFavoriteSong(req, res, next) {
     return next(new ApiError(500, "Internal Server Error"));
   }
 }
+
+
 
 module.exports = {
   deleteUser,

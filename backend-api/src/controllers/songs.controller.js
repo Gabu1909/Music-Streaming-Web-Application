@@ -2,7 +2,7 @@ const songService = require("../services/songs.service");
 const artistService = require("../services/artists.service");
 const albumService = require("../services/albums.service");
 const mm = require("music-metadata");
-const ApiError = require("../../api-error");
+const ApiError = require("../api-error");
 const { updateSongSchema } = require("../schemas/song.schema");
 const JSend = require("../jsend");
 
@@ -18,7 +18,6 @@ async function getDuration(filePath) {
   const metadata = await mm.parseFile(filePath);
   return Number(metadata.format.duration?.toFixed(2)) || null;
 }
-
 async function addSong(req, res, next) {
   try {
     const { title, artist: artistRaw, album: albumName } = req.body;
@@ -30,22 +29,22 @@ async function addSong(req, res, next) {
     const imgUrl = req.files?.cover?.[0]
       ? getImgPath(req.files.cover[0])
       : null;
-
     const artistNames = artistRaw.split(",").map((n) => n.trim());
-    const artistIds = [];
+    const artistObjs = [];
     for (const name of artistNames) {
       const artist = await artistService.findOrCreateArtistByName(name);
       if (!artist?.artist_id)
         return next(new ApiError(500, `Cannot find/create artist: ${name}`));
-      artistIds.push(artist.artist_id);
+      artistObjs.push(artist);
     }
 
     let album_id = null;
     if (albumName) {
       const album = await albumService.findOrCreateAlbumByName(
         albumName,
-        artistIds[0]
+        artistObjs[0].artist_id
       );
+
       if (!album?.album_id)
         return next(new ApiError(404, "Cannot create/find album"));
       album_id = album.album_id;
@@ -53,15 +52,15 @@ async function addSong(req, res, next) {
 
     const song = await songService.createSong({
       title,
-      artist_id: artistIds[0],
+      artist_id: artistObjs[0].artist_id,
       album_id,
       audio_url: audioUrl,
       image_url: imgUrl,
       duration,
     });
 
-    for (const artist_id of artistIds) {
-      await songService.addArtistToSong(song.song_id, artist_id);
+    for (const artist of artistObjs) {
+      await songService.addArtistToSong(song.song_id, artist.artist_id);
     }
 
     res
@@ -73,6 +72,7 @@ async function addSong(req, res, next) {
     next(new ApiError(500, "Internal Server Error"));
   }
 }
+
 async function updateSong(req, res, next) {
   try {
     const { id } = req.params;
@@ -126,14 +126,14 @@ async function updateSong(req, res, next) {
   }
 }
 
-async function getSongsByFilter(req, res, next) {
+async function getAllSongs(req, res, next) {
   try {
-    const { songs, pagination } = await songService.getSongsByFilter(req.query);
+    const { songs} = await songService.getSongs();
 
     if (songs.length === 0)
       return res.status(404).json(JSend.error("No songs found"));
 
-    res.json(JSend.success({ songs, pagination }));
+    res.json(JSend.success({ songs }));
   } catch (err) {
     next(new ApiError(500, err.message));
   }
@@ -160,11 +160,21 @@ async function deleteSong(req, res, next) {
     next(new ApiError(500, err.message));
   }
 }
+async function deleteAllSongs(req, res) {
+  try {
+    await songService.deleteAllSong();
+    return res.json(JSend.success({ message: "All songs have been deleted" }));
+  } catch (error) {
+    console.error("Error deleting all songs:", error);
+    return res.status(500).json(JSend.error("Internal server error"));
+  }
+}
 
 module.exports = {
   addSong,
   updateSong,
-  getSongsByFilter,
+  deleteAllSongs,
+  getAllSongs,
   getSongById,
   deleteSong,
 };
