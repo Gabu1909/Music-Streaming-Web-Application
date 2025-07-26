@@ -23,7 +23,7 @@ const {
 } = require("../middlewares/rate_limit");
 
 router.get("/", authenticateJWT, authorizeRole("admin"), usersController.getAllUsers);
-router.get("/:id", authenticateJWT, authorizeSelfOrAdmin, usersController.getUserById);
+router.get("/:id", authenticateJWT, usersController.getUserById);
 
 router.put(
   "/:id",
@@ -40,7 +40,6 @@ router.delete("/:id", authenticateJWT, authorizeSelfOrAdmin, usersController.del
 router.post(
   "/:id/favorites",
   authenticateJWT,
-  authorizeSelfOrAdmin,
   uploadnone.none(),
   validate(favoriteSongSchema),
   usersController.addFavoriteSong
@@ -49,14 +48,12 @@ router.post(
 router.get(
   "/:id/favorites",
   authenticateJWT,
-  authorizeSelfOrAdmin,
   usersController.getFavoriteSong
 );
 
 router.delete(
   "/:id/favorites",
   authenticateJWT,
-  authorizeSelfOrAdmin,
   favoriteLimiter,
   uploadnone.none(),
   validate(favoriteSongSchema),

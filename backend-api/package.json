@@ -16,6 +16,7 @@
     "knex-pg": "^0.0.10",
     "multer": "^2.0.1",
     "music-metadata": "^11.3.0",
+    "pm2": "^6.0.8",
     "swagger-ui-express": "^5.0.1",
     "zod": "^3.25.64"
   },

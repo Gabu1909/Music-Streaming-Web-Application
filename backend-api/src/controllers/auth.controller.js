@@ -3,7 +3,7 @@ const authService = require("../services/auth.service");
 const ApiError = require("../api-error");
 const { loginSchema } = require("../schemas/user.schema");
 function getImgPath(file) {
-  return `public/uploads/images/${file.filename}`;
+  return `/uploads/img/${file.filename}`;
 }
 async function createUser(req, res, next) {
   try {
@@ -21,7 +21,7 @@ async function createUser(req, res, next) {
       role: role || "user",
     });
     res.status(201).json({ status: "success", data: newUser });
-  } catch (err) {
+  } catch {
     next(new ApiError(500, "Create user failed"));
   }
 }
@@ -40,7 +40,7 @@ async function login(req, res, next) {
       status: "success",
       token,
       user: {
-        user_id: user.id,
+        user_id: user.user_id,
         username: user.username,
         email: user.email,
         avatar_url: user.avatar_url,

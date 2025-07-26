@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
     let folder = "public/uploads/others";
 
     if (file.fieldname === "cover" || file.fieldname === "avatar_url") {
-      folder = "public/uploads/images";
+      folder = "public/uploads/img";
     } else if (file.fieldname === "audio_files") {
       folder = "public/uploads/audio";
     }

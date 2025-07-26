@@ -5,6 +5,47 @@ async function create(artistData) {
   return artist;
 }
 
+async function findSongsByArtistId(artist_id) {
+  const songs = await knex("songs as s")
+    .join("songartists as sa", "sa.song_id", "s.song_id")
+    .leftJoin("artists as a", "a.artist_id", "sa.artist_id")
+    .whereIn("s.song_id", function () {
+      this.select("song_id")
+        .from("songartists")
+        .where("artist_id", artist_id);
+    })
+    .groupBy("s.song_id")
+    .select(
+      "s.song_id",
+      "s.title",
+      "s.audio_url",
+      "s.duration",
+      "s.image_url",
+      knex.raw(`
+        COALESCE(
+          JSON_AGG(
+            DISTINCT JSONB_BUILD_OBJECT('artist_id', a.artist_id, 'name', a.name)
+          ) FILTER (WHERE a.artist_id IS NOT NULL),
+          '[]'
+        ) AS artists
+      `)
+    );
+
+  return songs.map(song => ({
+    ...song,
+    artists: typeof song.artists === 'string' ? JSON.parse(song.artists) : song.artists
+  }));
+}
+
+
+async function findAlbumsByArtistId(artistId) {
+    const albums = await knex('albums')
+      .where('artist_id', artistId)
+      .select('album_id', 'title', 'release_date', 'cover_url');
+
+    return albums;
+}
+
 async function findByName(name) {
   return knex("artists").where("name", name).first();
 }
@@ -84,8 +125,17 @@ async function countArtists() {
   return Number(result.count);
 }
 
+async function find({ query }) {
+  if (!query) return { data: [] };
+  const artists = await knex("artists")
+    .select("artist_id", "name", "avatar_url")
+    .whereRaw("LOWER(name) LIKE ?", [`%${query.toLowerCase()}%`])
+    .limit(10);
+  return { data: artists };
+}
 module.exports = {
   create,
+  find,
   findByName,
   findById,
   findByUserId,
@@ -95,5 +145,7 @@ module.exports = {
   findAllWithFilters,
   updateById,
   deleteById,
+  findSongsByArtistId,
+  findAlbumsByArtistId,
   countArtists,
 };

@@ -15,7 +15,7 @@ async function createArtist(req, res) {
 
     let avatar_url = null;
     if (file) {
-      avatar_url = `public/uploads/${file.filename}`;
+      avatar_url = `public/uploads/img/${file.filename}`;
     }
 
     const newArtist = await artistService.create({ name, bio, avatar_url, user_id });
@@ -46,6 +46,24 @@ async function getAllArtists(req, res) {
     return res.status(500).json(JSend.error("Internal server error"));
   }
 }
+exports.getArtistSongs = async (req, res) => {
+  try {
+    const artist = await artistService.findById(req.params.id)
+      .populate('songs', 'title duration audioUrl coverImage')
+      .select('songs');
+      
+    if (!artist) {
+      return res.status(404).json({ error: 'Artist not found' });
+    }
+
+    res.json({
+      status: 'success',
+      data: artist.songs
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
 
 async function getArtistsByFilter(req, res) {
   try {
@@ -63,6 +81,40 @@ async function getArtistsByFilter(req, res) {
     }));
   } catch (error) {
     console.error("Error filtering artists:", error);
+    return res.status(500).json(JSend.error("Internal server error"));
+  }
+}
+async function getArtistAlbums(req, res) {
+  try {
+    const artistId = req.params.id;
+  
+    const artist = await artistService.findById(artistId);
+    if (!artist) {
+      return res.status(404).json(JSend.fail({ message: "Artist not found" }));
+    }
+
+    const albums = await artistService.findAlbumsByArtistId(artistId);
+    
+    return res.json(JSend.success({ albums }));
+  } catch (error) {
+    console.error("Error fetching artist albums:", error);
+    return res.status(500).json(JSend.error("Internal server error"));
+  }
+}
+
+async function getArtistSongs(req, res) {
+  try {
+    const artistId = req.params.id;
+    
+    const artist = await artistService.findById(artistId);
+    if (!artist) {
+      return res.status(404).json(JSend.fail({ message: "Artist not found" }));
+    }
+    const songs = await artistService.findSongsByArtistId(artistId);
+    
+    return res.json(JSend.success({ songs }));
+  } catch (error) {
+    console.error("Error fetching artist songs:", error);
     return res.status(500).json(JSend.error("Internal server error"));
   }
 }
@@ -90,7 +142,7 @@ async function updateArtistById(req, res) {
     const file = req.file || req.files?.avatar_url?.[0];
 
     if (file) {
-      updatedData.avatar_url = `public/uploads/${file.filename}`;
+      updatedData.avatar_url = `public/uploads/img/${file.filename}`;
     }
 
     const artist = await artistService.updateById(artistId, updatedData);
@@ -126,6 +178,7 @@ async function deleteArtistById(req, res) {
   }
 }
 
+
 module.exports = {
   createArtist,
   deleteAllArtists,
@@ -134,4 +187,7 @@ module.exports = {
   getArtistById,
   updateArtistById,
   deleteArtistById,
+  getArtistSongs,
+  getArtistAlbums
+
 };

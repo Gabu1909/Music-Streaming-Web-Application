@@ -10,6 +10,9 @@ const albumRoutes = require("./routes/album.route");
 const authRoutes = require("./routes/auth.route");
 const artistRoutes = require("./routes/artists.route");
 const playlistRoutes = require("./routes/playlist.route");
+
+const searchService = require('./services/search.service');
+
 const app = express();
 const {
   resourceNotFound,
@@ -21,6 +24,17 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   return res.json(JSend.success());
 });
+app.get('/api/search', async (req, res) => {
+  const query = req.query.q;
+  try {
+    const results = await searchService.search(query);
+    res.status(200).json({ status: 'success', data: results });
+  } catch (error) {
+    console.error('Search error:', error);
+    res.status(500).json({ error: 'Failed to fetch search results' });
+  }
+});
+
 app.use("/api", generalLimiter);
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/users", usersRouter);
@@ -29,7 +43,6 @@ app.use("/api/albums", albumRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/artists", artistRoutes);
 app.use("/api/playlists", playlistRoutes);
-
 app.use(resourceNotFound);
 app.use(handleError);
 module.exports = app;
