@@ -1,1 +1,5 @@
+<<<<<<< Updated upstream
 *.mp3
+=======
+/backend-api/public/uploads/audio
+>>>>>>> Stashed changes
