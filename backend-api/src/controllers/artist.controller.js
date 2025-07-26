@@ -64,6 +64,7 @@ exports.getArtistSongs = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 async function getArtistsByFilter(req, res) {
   try {
     const { name, page = 1, limit = 10 } = req.query;
@@ -109,7 +110,6 @@ async function getArtistSongs(req, res) {
     if (!artist) {
       return res.status(404).json(JSend.fail({ message: "Artist not found" }));
     }
-
     const songs = await artistService.findSongsByArtistId(artistId);
     
     return res.json(JSend.success({ songs }));
@@ -177,6 +177,7 @@ async function deleteArtistById(req, res) {
     return res.status(500).json(JSend.error("Internal server error"));
   }
 }
+
 
 module.exports = {
   createArtist,

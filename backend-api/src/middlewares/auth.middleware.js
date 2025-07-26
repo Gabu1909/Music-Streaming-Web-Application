@@ -17,6 +17,7 @@ function authenticateJWT(req, res, next) {
     req.user = decoded; 
     next();
   } catch  {
+
     return next(new ApiError(401, "Invalid or expired token"));
   }
 }

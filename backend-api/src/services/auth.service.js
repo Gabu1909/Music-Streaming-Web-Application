@@ -16,6 +16,7 @@ async function comparePassword(password, hash) {
 function generateToken(user) {
   const payload = {
     user_id: user.user_id,
+
     email: user.email,
     role: user.role,
   };

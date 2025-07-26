@@ -646,6 +646,26 @@
                 }
               }
             }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -737,6 +757,26 @@
                     "message": {
                       "type": "string",
                       "example": "Song not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
                     }
                   }
                 }
@@ -1252,6 +1292,26 @@
               }
             }
           },
+          "429": {
+            "description": "Too Many Requests – Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "fail"
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Too many requests from this IP, please try again after 15 minutes."
+                    }
+                  }
+                }
+              }
+            }
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -1365,6 +1425,7 @@
         }
       }
     },
+
     "/api/users/{id}/unblock": {
       "patch": {
         "summary": "Unblock user",
@@ -2327,7 +2388,7 @@
       }
     }
   },
-  "components": {
+ "components": {
     "schemas": {
       "Song": {
         "type": "object",
