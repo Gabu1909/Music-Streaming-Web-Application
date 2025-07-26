@@ -33,10 +33,15 @@ function toggleSidebar() {
   sidebarCollapsed.value = !sidebarCollapsed.value
 }
 
-const getAvatarUrl = (avatarPath) => {
-  if (!avatarPath) return '/uploads/img/default-cover.jpg'
-  return `/${avatarPath.replace(/^public\//, '')}`
-}
+const getAvatarUrl = (url) => {
+  if (!url) return 'uploads/img/default-usr.jpg';
+  let cleanedUrl = url.replace(/^\/?public\//, '');
+  if (cleanedUrl.startsWith('/uploads/')) {
+    cleanedUrl = cleanedUrl.slice(1);
+  }
+
+  return '/' + cleanedUrl;
+};
 
 function toggleMobileMenu() {
   mobileMenuOpen.value = !mobileMenuOpen.value
