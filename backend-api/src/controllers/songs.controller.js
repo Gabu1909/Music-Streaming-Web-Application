@@ -126,14 +126,14 @@ async function updateSong(req, res, next) {
   }
 }
 
-async function getSongsByFilter(req, res, next) {
+async function getAllSongs(req, res, next) {
   try {
-    const { songs, pagination } = await songService.getSongsByFilter(req.query);
+    const { songs} = await songService.getSongs();
 
     if (songs.length === 0)
       return res.status(404).json(JSend.error("No songs found"));
 
-    res.json(JSend.success({ songs, pagination }));
+    res.json(JSend.success({ songs }));
   } catch (err) {
     next(new ApiError(500, err.message));
   }
@@ -174,7 +174,7 @@ module.exports = {
   addSong,
   updateSong,
   deleteAllSongs,
-  getSongsByFilter,
+  getAllSongs,
   getSongById,
   deleteSong,
 };

@@ -1,34 +1,47 @@
-const knex = require("../database/knex");
 const JSend = require("../jsend");
 const albumService = require("../services/albums.service");
+
+
 const AlbumController = {
-  async getAllAlbum(req, res, next) {
+  async getAllAlbums(req, res, next) {
     try {
-      const albums = await knex("albums").select("*");
+      const albums = await albumService.getAllAlbums();
       res.status(200).json(JSend.success({ albums }));
     } catch (err) {
       next(err);
     }
   },
-  async createAlbum(req, res, next) {
+
+  async getAlbumById(req, res, next) {
     try {
-      const album = await albumService.createAlbumWithSongs(req);
-      res.status(201).json(JSend.success({ album }));
+      const { id } = req.params;
+      const album = await albumService.getAlbumById(id);
+
+      if (!album) return res.status(404).json(JSend.fail("Album not found"));
+
+      res.status(200).json(JSend.success({ album }));
     } catch (err) {
       next(err);
     }
   },
 
-  async getByAlbumId(req, res, next) {
+  async getSongsByAlbum(req, res, next) {
     try {
       const { id } = req.params;
-      const album = await knex("albums").where({ album_id: id }).first();
+      const result = await albumService.getAlbumWithSongs(id);
 
-      if (!album) {
-        return res.status(404).json(JSend.fail("Album not found"));
-      }
+      if (!result) return res.status(404).json(JSend.fail("Album not found"));
 
-      res.status(200).json(JSend.success({ album }));
+      res.status(200).json(JSend.success(result));
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async createAlbum(req, res, next) {
+    try {
+      const album = await albumService.createAlbumWithSongs(req);
+      res.status(201).json(JSend.success({ album }));
     } catch (err) {
       next(err);
     }

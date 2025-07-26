@@ -1,15 +1,16 @@
 const userService = require("../services/users.service");
+
 const ApiError = require("../api-error");
 const bcrypt = require("bcrypt");
 const JSend = require("../jsend");
 function getImgPath(file) {
-  return `public/uploads/images/${file.filename}`;
+  return `/uploads/img/${file.filename}`;
 }
 async function getAllUsers(req, res, next) {
   try {
     const users = await userService.getAll();
     res.json({ status: "success", data: users });
-  } catch (err) {
+  } catch {
     next(new ApiError(500, "Fetch users failed"));
   }
 }
@@ -19,7 +20,7 @@ async function getUserById(req, res, next) {
     const user = await userService.getById(req.params.id);
     if (!user) return next(new ApiError(404, "User not found"));
     res.json({ status: "success", data: user });
-  } catch (err) {
+  } catch {
     return next(new ApiError(500, "Get user failed"));
   }
 }
@@ -63,7 +64,7 @@ async function deleteUser(req, res, next) {
   try {
     await userService.remove(req.params.id);
     res.json({ status: "success", message: "User deleted" });
-  } catch (err) {
+  } catch {
     next(new ApiError(500, "Delete user failed"));
   }
 }
@@ -91,7 +92,7 @@ async function removeFavoriteSong(req, res, next) {
       status: "success",
       message: "Song removed to favorites",
     });
-  } catch (err) {
+  } catch {
     return next(new ApiError(500, "Internal Server Error"));
   }
 }
@@ -117,6 +118,8 @@ async function getFavoriteSong(req, res, next) {
     return next(new ApiError(500, "Internal Server Error"));
   }
 }
+
+
 
 module.exports = {
   deleteUser,

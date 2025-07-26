@@ -16,7 +16,8 @@ function authenticateJWT(req, res, next) {
     const decoded = jwt.verify(token, JWT_SECRET);
     req.user = decoded; 
     next();
-  } catch (err) {
+  } catch  {
+
     return next(new ApiError(401, "Invalid or expired token"));
   }
 }
