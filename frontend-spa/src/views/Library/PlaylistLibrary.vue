@@ -43,7 +43,7 @@
             :id="playlist.id"
             :name="playlist.name"
             :image="playlist.image"
-            :song-count="playlist.song_count"
+             :songCount="playlist.song_count"
             @play="playPlaylist"
           />
         </div>
@@ -58,7 +58,7 @@
             :id="playlist.id"
             :name="playlist.name"
             :image="playlist.image"
-            :song-count="playlist.song_count"
+            :songCount="playlist.song_count"
             @play="playPlaylist"
           />
         </div>
@@ -133,10 +133,14 @@ const fetchPlaylists = async () => {
         song_count: songCount,
         image: playlist.image_url || defaultPlaylistImage,
       };
+
+
     });
+    console.log('Normalized playlist:', playlists.value);
   } catch (err) {
     error.value = 'Failed to load playlists. Please try again.';
     console.error('Error fetching playlists:', err);
+
   } finally {
     loading.value = false;
   }

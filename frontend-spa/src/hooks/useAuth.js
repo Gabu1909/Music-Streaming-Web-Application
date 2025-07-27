@@ -1,11 +1,13 @@
+
 import { useMutation, useQueryClient } from '@tanstack/vue-query';
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, onMounted } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
 import authService from '@/services/auth.service';
 
 export function useAuth() {
   const queryClient = useQueryClient();
   const router = useRouter();
+  const route = useRoute();
   const userId = ref(localStorage.getItem('userId') || null);
   const isLogin = ref(true);
   const email = ref('');
@@ -19,6 +21,14 @@ export function useAuth() {
     message: '',
     type: 'success',
     icon: 'bi bi-check-circle',
+  });
+
+  onMounted(() => {
+    if (route.query.error === 'server-error') {
+      showToast('Server error occurred. Please try again later.', 'error');
+    } else if (route.query.error === 'auth-error') {
+      showToast('Authentication failed. Please log in again.', 'error');
+    }
   });
 
   const showToast = (message, type = 'success') => {
@@ -43,11 +53,18 @@ export function useAuth() {
     avatarPreview.value = null;
   };
 
+  const getAuthHeaders = () => {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No token found');
+    return { Authorization: `Bearer ${token}` };
+  };
+
   const logout = async () => {
     try {
-      await authService.logout?.();
+      await authService.logout();
       localStorage.removeItem('token');
       localStorage.removeItem('userId');
+      localStorage.removeItem('user');
       userId.value = null;
       queryClient.removeQueries();
       router.push('/login');
@@ -83,25 +100,39 @@ export function useAuth() {
     return re.test(email);
   };
 
-  const decodeTokenRole = (token) => {
-    return token.includes('admin') ? 'admin' : 'user';
+  const checkAuth = async () => {
+    try {
+      const token = localStorage.getItem('userId');
+      const userId = localStorage.getItem('userId');
+      if (!token || !userId) {
+        throw new Error('No token or userId');
+      }
+      const user = await authService.getUser(userId, token);
+      localStorage.setItem('user', JSON.stringify(user));
+      return user && user.role === 'admin';
+    } catch {
+      showToast('Authentication check failed', 'error');
+      return false;
+    }
   };
 
   const loginMutation = useMutation({
     mutationFn: (credentials) => authService.login(credentials),
-    onSuccess: (response) => {
-      if (response?.token && response?.user?.user_id) {
-        localStorage.setItem('token', response.token);
-        userId.value = response.user.user_id;
-        localStorage.setItem('userId', userId.value);
-        showToast('🎉 Login successful!', 'success');
-        queryClient.invalidateQueries(['user']);
-        setTimeout(() => {
-          const role = decodeTokenRole(response.token);
-          router.push(role === 'admin' ? '/admin' : '/');
-        }, 1500);
+    onSuccess(data) {
+      console.log('Login response:', data);
+      if (!data?.token || !data?.user?.user_id) {
+        showToast('Invalid login response', 'error');
+        return;
+      }
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userId', data.user.user_id);
+      localStorage.setItem('user', JSON.stringify(data.user));
+      userId.value = data.user.user_id;
+      showToast('🎉 Login successful!', 'success');
+      if (data.user.role === 'admin') {
+        router.push('/admin');
       } else {
-        showToast(response?.message || 'Login failed. Please try again', 'error');
+        router.push('/');
       }
     },
     onError: (error) => {
@@ -136,6 +167,7 @@ export function useAuth() {
       showToast('Please fill in all fields', 'error');
       return;
     }
+
     loginMutation.mutate({
       email: email.value,
       password: password.value,
@@ -187,5 +219,7 @@ export function useAuth() {
     userId,
     showToast,
     validateEmail,
+    checkAuth,
+    getAuthHeaders,
   };
 }

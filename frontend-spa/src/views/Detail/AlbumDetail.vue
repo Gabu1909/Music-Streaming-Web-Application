@@ -128,7 +128,9 @@ onMounted(async () => {
 
 
 <style scoped>
-
+.album-detail{
+  width: 100%;
+}
 .album-header {
   display: flex;
   flex-wrap: wrap;

@@ -10,6 +10,15 @@ export default {
       },
     });
   },
+  getAuthHeaders() {
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('No token found');
+
+  return {
+    Authorization: `Bearer ${token}`
+  };
+},
+
 
   async register(formData) {
     return await efetch('/api/auth/register', {
@@ -18,17 +27,28 @@ export default {
     });
   },
 
-  async getUser() {
+  getUser() {
+    const cached = localStorage.getItem('user');
+    if (cached) return Promise.resolve(JSON.parse(cached));
+
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('userId');
-    if (!token) throw new Error('No token found');
+    if (!token || !userId || typeof userId !== 'string' || userId.trim() === '') {
+    return Promise.reject('Invalid or missing token or userId');
+  }
 
-    return await efetch(`/api/users/${userId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
+    return efetch(`/api/users/${userId}`, {
+      headers: { Authorization: `Bearer ${token}` }
+    }).then(user => {
+      localStorage.setItem('user', JSON.stringify(user));
+      return user;
     });
   },
+  async checkAuth() {
+    const user = await this.getUser();
+    return user && user.role === 'admin';
+  },
+
 
   async logout() {
     localStorage.removeItem('token');
@@ -65,15 +85,18 @@ export default {
   },
 
   async getFavorites(userId) {
-    const token = localStorage.getItem('token');
-    if (!token) throw new Error('User not logged in');
-
-    return await efetch(`/api/users/${userId}/favorites`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-      },
-    });
-  },
+  if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+    throw new Error('Invalid user ID');
+  }
+  const token = localStorage.getItem('token');
+  if (!token) throw new Error('User not logged in');
+  console.log('Fetching favorites for userId:', userId);
+  return await efetch(`/api/users/${userId}/favorites`, {
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+  });
+},
   async updateProfile(userId, formData) {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('No token found');

@@ -26,19 +26,19 @@
       <div v-else-if="player.favorites.length === 0" class="text-center py-6">
         <i class="bi bi-music-note-list display-1 text-light opacity-50"></i>
         <p class="text-light mt-3 fs-4">No favorite songs yet. Add some!</p>
-        <a href="/discover" class="btn btn-outline-light mt-3 px-4 py-2">Discover Songs</a>
+        <a href="/" class="btn btn-outline-light mt-3 px-4 py-2">Discover Songs</a>
       </div>
 
       <div v-else class="favorites-list row g-4">
-        <div v-for="song in player.favorites" :key="song?.song_id" class="col-12 col-md-6 col-lg-4">
-          <div class="favorite-item card h-100 shadow-sm">
-            <SongItem
-              :song="song"
-              @song-click="handlePlay"
-              @toggle-favorite="handleToggleFavorite"
-            />
-          </div>
-        </div>
+       <div v-for="song in player.favorites" :key="song.id" class="col-12 col-md-6 col-lg-4">
+  <div class="favorite-item card h-100 shadow-sm">
+    <SongItem
+      :song="song"
+      @song-click="handlePlay"
+      @toggle-favorite="handleToggleFavorite"
+    />
+  </div>
+</div>
       </div>
     </div>
   </div>
@@ -68,12 +68,10 @@ const fetchFavorites = async () => {
       throw new Error('User not logged in');
     }
 
-    const response = await player.loadFavorites(userId.value);
+    const response = await player.loadFavorites();
     if (!response || !response.data || !Array.isArray(response.data)) {
       throw new Error('Invalid data from server');
     }
-
-    player.state.favorites = response.data;
   } catch (err) {
     error.value = err.message || 'Failed to load favorites.';
     console.error('Fetch favorites error:', err);
@@ -91,9 +89,8 @@ const handleToggleFavorite = (songData) => {
     error.value = 'Please log in to toggle favorites.';
     return;
   }
-  player.toggleFavorite(songData.song_id, !songData.isFavorite, userId.value);
+  player.toggleFavorite(songData.song_id);
 };
-
 onMounted(() => {
   console.log('userId on mount:', userId.value);
   if (userId.value) {
@@ -118,6 +115,7 @@ watch(() => userId.value, (newUserId) => {
   background: linear-gradient(135deg, #2d122b 0%, #2a2a44 50%, #121212 100%);
   min-height: 100vh;
   padding-top: 4rem;
+  width: 100%;
 }
 
 .container {

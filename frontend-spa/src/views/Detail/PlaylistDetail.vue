@@ -115,6 +115,7 @@ const goBack = () => {
   color: white;
   background: linear-gradient(to bottom, #1a1a2e, #121212);
   min-height: 100vh;
+  width: 100%;
 }
 
 .detail-header {

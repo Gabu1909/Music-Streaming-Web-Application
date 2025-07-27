@@ -1,60 +1,38 @@
-
 import { efetch } from './efetch.js';
 
 const SongService = {
+
   async getSongs() {
-    try {
-      const url = `/api/songs`;
-      const response = await efetch(url, { method: 'GET' });
-      return response.data || response;
-    } catch (error) {
-      console.error('Error fetching songs:', error);
-      throw error;
-    }
+    return await efetch('/api/songs');
   },
 
   async getSongById(id) {
-    try {
-      const response = await efetch(`/songs/${id}`, { method: 'GET' });
-      return response.data || response;
-    } catch (error) {
-      console.error(`Error fetching song with ID ${id}:`, error);
-      throw error;
-    }
+    return await efetch(`/api/songs/${id}`);
   },
 
-  async getSongsByArtist(artistId) {
-    try {
-      const response = await efetch(`/api/artists/${artistId}/songs`, { method: 'GET' });
-      return response;
-    } catch (error) {
-      console.error('Error fetching artist songs:', error);
-      throw error;
-    }
-  },
-
-  async getSongDetails(songId) {
-    try {
-      const response = await efetch(`/api/songs/${songId}`, { method: 'GET' });
-      return response;
-    } catch (error) {
-      console.error('Error fetching song details:', error);
-      throw error;
-    }
+  async createSong(data) {
+    return await efetch('/api/songs', {
+      method: 'POST',
+      body: data
+    });
   },
 
   async updateSong(id, data) {
-    try {
-      const response = await efetch(`/songs/${id}`, {
-        method: 'PUT',
-        body: JSON.stringify(data),
-      });
-      return response.data || response;
-    } catch (error) {
-      console.error(`Error updating song with ID ${id}:`, error);
-      throw error;
-    }
+    return await efetch(`/api/songs/${id}`, {
+      method: 'PUT',
+      body: data
+    });
   },
+
+  async deleteSong(id) {
+    return await efetch(`/api/songs/${id}`, {
+      method: 'DELETE'
+    });
+  },
+
+  async getSongsByArtist(artistId) {
+    return await efetch(`/api/artists/${artistId}/songs`);
+  }
 };
 
 export default SongService;

@@ -82,6 +82,7 @@ const moveToTop = (index) => {
   background: linear-gradient(135deg, #1a1a2e 0%, #2a2a44 50%, #121212 100%);
   min-height: 100vh;
   padding-top: 4rem;
+  width: 100%;
 }
 .underline {
   position: absolute;

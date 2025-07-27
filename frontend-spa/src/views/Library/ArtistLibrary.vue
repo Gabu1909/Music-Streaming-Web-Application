@@ -119,6 +119,7 @@ const scrollToArtists = () => {
   min-height: 100vh;
   font-family: 'Poppins', sans-serif;
   overflow-x: hidden;
+  width: 100%;
 }
 
 .hero-banner {

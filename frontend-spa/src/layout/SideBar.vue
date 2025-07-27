@@ -34,7 +34,7 @@ function toggleSidebar() {
 }
 
 const getAvatarUrl = (url) => {
-  if (!url) return 'uploads/img/default-usr.jpg';
+  if (!url) return '/uploads/img/default-avatar.jpg';
   let cleanedUrl = url.replace(/^\/?public\//, '');
   if (cleanedUrl.startsWith('/uploads/')) {
     cleanedUrl = cleanedUrl.slice(1);
@@ -141,7 +141,7 @@ const toggleNowPlaying = () => {
       </button>
       <div class="mobile-logo">
         <i class="fas fa-music"></i>
-        <span>MyMusic</span>
+        <span>MUZIK</span>
       </div>
       <div class="mobile-user" @click="toggleUserMenu">
         <img v-if="userId" :src="getAvatarUrl(user.avatar)" class="user-avatar" :alt="user.name">
@@ -167,7 +167,7 @@ const toggleNowPlaying = () => {
         <div class="logo-section" :class="{ 'collapsed': sidebarCollapsed }">
           <router-link to="/" class="logo">
             <i class="fas fa-music logo-icon"></i>
-            <span class="logo-text" v-show="!sidebarCollapsed">MyMusic</span>
+            <span class="logo-text" v-show="!sidebarCollapsed">MUZIK</span>
           </router-link>
           <button class="collapse-btn d-none d-lg-block" @click="toggleSidebar"
             :title="sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
@@ -175,7 +175,6 @@ const toggleNowPlaying = () => {
           </button>
         </div>
 
-        <!-- Search Section -->
         <div class="search-section" v-show="!sidebarCollapsed">
           <div class="search-container">
             <i class="fas fa-search search-icon"></i>
