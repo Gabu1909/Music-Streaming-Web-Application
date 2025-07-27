@@ -1,11 +1,29 @@
 :8001 {
-    root D:\src\frontend-spa\dist
+    header /api/* {
+        Access-Control-Allow-Origin "https://development.id.vn"
+        Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS"
+        Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With"
+        Access-Control-Allow-Credentials "true"
+    }
+
+    @options {
+        method OPTIONS
+        path /api/*
+    }
+    handle @options {
+        respond 204
+    }
 
     handle /api/* {
-        reverse_proxy http://localhost:3000
+        reverse_proxy http://localhost:3000 {  # Change to :8001 if backend runs on 8001
+            header_up Host {host}
+            header_up X-Real-IP {remote}
+            header_up X-Forwarded-Proto {scheme}
+        }
     }
 
     handle {
+        root  D:\src\frontend-spa\dist
         try_files {path} /index.html
         file_server
     }
