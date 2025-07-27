@@ -150,7 +150,6 @@ onMounted(() => {
     <HomeBanner title="Chào mừng trở lại" subtitle="Hàng ngàn bài hát đang chờ bạn khám phá" :background="bannerImage"
       gradient="linear-gradient(to right, #6a11cb, #2575fc)" />
 
-    <!-- Loading State -->
     <div v-if="loading" class="text-center py-5">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Đang tải...</span>
@@ -204,7 +203,7 @@ onMounted(() => {
 
 
 
-      <!-- Personalized Section -->
+
       <SectionContainer title="FOR YOU FOR TODAY" v-if="personalizedSongs.length > 0">
         <div class="row">
           <div v-for="song in personalizedSongs" :key="song.id || song._id" class="col-md-2 col-6 mb-3">

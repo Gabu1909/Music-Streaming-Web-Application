@@ -2,12 +2,41 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import searchService from '@/services/search.service'
-import { usePlayer } from '@/store'
+import { usePlayer  } from '@/store/index'
 import ArtistCard from '@/components/common/ArtistCard.vue'
 import PlaylistCard from '@/components/common/PlaylistCard.vue'
 import AlbumCard from '@/components/common/AlbumCard.vue'
 import SongCard from '@/components/common/SongCard.vue'
+const getArtistName = (song) => {
+  if (Array.isArray(song.artists) && song.artists.length > 0) {
+    return song.artists.map(a => a.name || 'Unknown').join(', ');
+  }
+  if (typeof song.artist === 'string') return song.artist;
+  if (song.artist && song.artist.name) return song.artist.name;
+  return 'Unknown Artist';
+};
+const getSongImage = (song) => {
+  if (!song) return null;
+  if (song.image_url) return song.image_url;
+  if (song.thumbnail) return song.thumbnail;
 
+  if (song.album && song.album.cover_url) return song.album.cover_url;
+
+  if (song.artist) {
+    if (song.artist.avatar_url) return song.artist.avatar_url;
+    if (song.artist.image_url) return song.artist.image_url;
+  }
+
+  return '/uploads/img/default-cover.jpg';
+};
+
+const formatDuration = (duration) => {
+  if (!duration) return '0:00';
+  if (typeof duration === 'string' && duration.includes(':')) return duration;
+  const minutes = Math.floor(duration / 60);
+  const seconds = Math.floor(duration % 60);
+  return `${minutes}:${seconds.toString().padStart(2, '0')}`;
+};
 const route = useRoute()
 const router = useRouter()
 const player = usePlayer()
@@ -77,19 +106,8 @@ watch(() => route.query.q, (newQuery) => {
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <section v-if="searchResults.songs.length" class="results-section">
-        <h2 class="section-title">Songs</h2>
-        <div class="results-grid">
-          <SongCard
-            v-for="song in searchResults.songs"
-            :key="song.song_id"
-            :artist="song.artist"
-            :title="song.title"
-            :song="song"
-            :image_url="song.image_url"
-            @click="playSong(song)"
-          />
-        </div>
-      </section>
+</section>
+
       <section v-if="searchResults.artists.length" class="results-section">
         <h2 class="section-title">Artists</h2>
         <div class="results-grid">
