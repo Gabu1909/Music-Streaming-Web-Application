@@ -10,15 +10,15 @@
             </div>
           </div>
           <button
-            v-if="userId"
-            @click="toggleFavorite"
-            class="favorite-btn"
-            :class="{ 'favorited': isFavorited }"
-            :disabled="isLoading"
-            :title="isFavorited ? 'Remove from Favorites' : 'Add to Favorites'"
-          >
-            <i :class="isFavorited ? 'fas fa-heart' : 'far fa-heart'"></i>
-          </button>
+  v-if="userId"
+  @click="toggleFavorite"
+  class="favorite-btn"
+  :class="{ 'favorited': isFavorited }"
+  :disabled="store.isLoadingFavorite"
+  :title="isFavorited ? 'Remove from Favorites' : 'Add to Favorites'"
+>
+  <i :class="isFavorited ? 'fas fa-heart' : 'far fa-heart'"></i>
+</button>
         </div>
 
         <div class="player-center">
@@ -95,7 +95,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 const audioRef = ref(null);
 const store = usePlayer();
-const { userId } = useAuth(); // Get userId from useAuth
+const { userId } = useAuth();
 const isVisible = ref(true);
 
 const currentSong = computed(() => store.currentTrack);
@@ -114,8 +114,11 @@ const volumeIcon = computed(() => {
 });
 
 const isFavorited = computed(() => {
-  if (!currentSong.value || !favorites.value) return false;
-  return favorites.value.some(fav => fav.songId === currentSong.value.id);
+  if (!currentSong.value || !favorites.value || !favorites.value.length) return false;
+  return favorites.value.some(fav =>
+    String(fav.songId) === String(currentSong.value.id) ||
+    String(fav.song_id) === String(currentSong.value.id)
+  );
 });
 
 watch(favorites, (newFavorites) => {
@@ -128,12 +131,7 @@ const toggleFavorite = async () => {
     return;
   }
   try {
-    if (isFavorited.value) {
-      await store.removeFromFavorites(currentSong.value.id, userId.value);
-    } else {
-      await store.addToFavorites(currentSong.value.id, userId.value);
-    }
-    await store.loadFavorites(userId.value); // Refresh favorites list
+    await store.toggleFavorite(currentSong.value.id);
   } catch (error) {
     console.error('Error toggling favorite:', error);
     store.setError('Failed to toggle favorite');
