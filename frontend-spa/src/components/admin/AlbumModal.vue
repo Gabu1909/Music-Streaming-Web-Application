@@ -153,7 +153,7 @@ export default {
     updateFormData(album) {
       const albumObj = album || {}
       this.form = {
-        id: albumObj.album_id || albumObj.id || null,
+        album_id: albumObj.album_id || albumObj.id || null,
         title: String(albumObj.title || '').trim(),
         artist: albumObj.artist_name || albumObj.artist || '',
         release_date: albumObj.release_date || ''
@@ -212,8 +212,8 @@ export default {
           console.log(`Song file ${index + 1} attached: ${file.name}`)
         })
 
-        if (this.mode === 'edit' && this.form.id) {
-          formData.append('album_id', this.form.id)
+        if (this.mode === 'edit' && this.form.album_id) {
+          formData.append('album_id', this.form.album_id)
         }
 
         console.log('FormData entries:')
@@ -222,8 +222,8 @@ export default {
         }
 
         let result
-        if (this.mode === 'edit' && this.form.id) {
-          result = await albumsService.updateAlbum(this.form.id, formData)
+        if (this.mode === 'edit' && this.form.album_id) {
+          result = await albumsService.updateAlbum(this.form.album_id, formData)
         } else {
           result = await albumsService.createAlbum(formData)
         }

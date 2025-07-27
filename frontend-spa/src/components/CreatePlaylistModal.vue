@@ -2,10 +2,16 @@
   <div class="modal">
     <div class="modal-content">
       <h2>Create New Playlist</h2>
-      <input v-model="playlistName" placeholder="Enter playlist name" class="modal-input" />
+
+      <input
+        v-model="playlistName"
+        placeholder="Enter playlist name"
+        class="modal-input"
+      />
+
       <!-- File input for cover image -->
       <div class="cover-upload">
-        <label for="cover-upload" class="cover-label">Upload Cover Image</label>
+        <label for="cover-upload" class="cover-label">Upload Cover Image (Optional)</label>
         <input
           id="cover-upload"
           type="file"
@@ -14,16 +20,23 @@
           class="modal-input"
         />
         <p v-if="file" class="cover-preview">{{ file.name }}</p>
+        <p v-if="uploadedCoverUrl" class="cover-success">✓ Cover uploaded successfully</p>
       </div>
 
       <!-- Song Selection -->
       <div class="song-selection">
         <h3>Select Songs</h3>
-        <p class="song-count" v-if="songs?.length">{{ songs.length }} songs available</p>
+        <p class="song-count" v-if="songs && songs.length">{{ songs.length }} songs available</p>
         <p class="song-count" v-else>No songs available</p>
+
         <div class="song-search">
-          <input v-model="songSearch" placeholder="Search songs..." class="modal-input" />
+          <input
+            v-model="songSearch"
+            placeholder="Search songs..."
+            class="modal-input"
+          />
         </div>
+
         <div class="song-list">
           <div v-if="isLoading" class="loading-state">
             <div class="spinner"></div>
@@ -32,14 +45,39 @@
           <div v-else-if="fetchError" class="error-message">
             <span>{{ fetchError.message || 'Failed to load songs. Please try again.' }}</span>
           </div>
-          <div v-else-if="filteredSongs.length === 0" class="no-songs">
+          <div v-else-if="!filteredSongs || filteredSongs.length === 0" class="no-songs">
             <span>No songs found</span>
           </div>
           <div v-else class="song-list-items">
             <label v-for="song in filteredSongs" :key="song.id" class="song-item">
-              <input type="checkbox" v-model="selectedSongs" :value="song.id" />
+              <input
+                type="checkbox"
+                v-model="selectedSongIds"
+                :value="song.id"
+              />
               <span>{{ song.title }} - {{ song.artist }}</span>
             </label>
+          </div>
+        </div>
+
+        <!-- Selected songs display -->
+        <div v-if="selectedSongs && selectedSongs.length > 0" class="selected-songs">
+          <h4>Selected Songs ({{ selectedSongs.length }})</h4>
+          <div class="selected-list">
+            <div
+              v-for="song in selectedSongs"
+              :key="song.id"
+              class="selected-item"
+            >
+              <span>{{ song.title }} - {{ song.artist }}</span>
+              <button
+                type="button"
+                @click="removeSong(song.id)"
+                class="remove-btn"
+              >
+                ×
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -49,35 +87,49 @@
       </div>
 
       <div class="modal-actions">
-        <button @click="createPlaylist" class="modal-save-btn" :disabled="isCreating">
-          {{ isCreating ? 'Saving...' : 'Save' }}
+        <button
+          @click="handleCreatePlaylist"
+          class="modal-save-btn"
+          :disabled="!canCreatePlaylist"
+        >
+          {{ isCreating ? 'Creating...' : 'Create Playlist' }}
         </button>
-        <button @click="$emit('close')" class="modal-cancel-btn">Cancel</button>
+        <button @click="$emit('close')" class="modal-cancel-btn">
+          Cancel
+        </button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useQuery, useMutation } from '@tanstack/vue-query';
+import { ref, computed, watch } from 'vue';
+import { useRouter } from 'vue-router';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/vue-query';
 import { usePlayer } from '@/store';
 import SongService from '@/services/song.service';
 import { playlistService } from '@/services/playlist.service';
 
 const emit = defineEmits(['close', 'create']);
-
+const router = useRouter();
+const queryClient = useQueryClient();
 const playerStore = usePlayer();
+
+// Reactive data
 const playlistName = ref('');
 const songSearch = ref('');
-const selectedSongs = ref([]);
+const selectedSongIds = ref([]);
 const file = ref(null);
 const mutationError = ref(null);
+const uploadedCoverUrl = ref(null);
+const isUploading = ref(false);
+const isCreatingPlaylist = ref(false);
 
+// Fetch songs
 const { data: songs, isLoading, error: fetchError } = useQuery({
   queryKey: ['songs'],
   queryFn: async () => {
-    console.log('Fetching songs from /api/songs...');
+    console.log('Fetching songs from API...');
     const response = await SongService.getSongs();
     console.log('Raw API response:', response);
 
@@ -86,13 +138,13 @@ const { data: songs, isLoading, error: fetchError } = useQuery({
       songList = response;
     } else if (response.status === 'success' && Array.isArray(response.data)) {
       songList = response.data;
-    } else if (response.status === 'success' && Array.isArray(response.data.songs)) {
+    } else if (response.status === 'success' && response.data && Array.isArray(response.data.songs)) {
       songList = response.data.songs;
     } else if (response.songs && Array.isArray(response.songs)) {
       songList = response.songs;
     } else {
-      console.log('Unexpected response type:', typeof response, 'Response:', response);
-      throw new Error('Invalid response format: Expected song data');
+      console.error('Unexpected response format:', response);
+      throw new Error('Invalid response format from server');
     }
 
     return songList
@@ -100,95 +152,182 @@ const { data: songs, isLoading, error: fetchError } = useQuery({
       .map(song => ({
         id: song.song_id,
         title: song.title || 'Unknown Title',
-        artist: song.artists && song.artists.length > 0 ? song.artists[0].name : 'Unknown Artist',
+        artist: song.artists && song.artists.length > 0
+          ? song.artists[0].name
+          : 'Unknown Artist',
       }));
   },
-  onError: (err) => {
-    console.error('Error fetching songs:', err);
-  },
+  staleTime: 5 * 60 * 1000, // 5 minutes
 });
 
+// Computed properties
 const filteredSongs = computed(() => {
-  console.log('Filtering songs, search:', songSearch.value, 'total songs:', songs.value?.length || 0);
-  if (!songSearch.value) return songs.value || [];
-  return (songs.value || []).filter(song =>
-    song.title.toLowerCase().includes(songSearch.value.toLowerCase()) ||
-    song.artist.toLowerCase().includes(songSearch.value.toLowerCase())
+  if (!songs.value) return [];
+  if (!songSearch.value) return songs.value;
+
+  const searchTerm = songSearch.value.toLowerCase();
+  return songs.value.filter(song =>
+    song.title.toLowerCase().includes(searchTerm) ||
+    song.artist.toLowerCase().includes(searchTerm)
   );
 });
 
-const { mutate: createPlaylist, isLoading: isCreating } = useMutation({
-  mutationFn: async () => {
-    if (!playlistName.value?.trim()) {
-      throw new Error('Please enter a playlist name.');
-    }
-    if (selectedSongs.value.length === 0) {
-      throw new Error('Please select at least one song.');
-    }
-    if (!file.value) {
-      throw new Error('Please upload a cover image.');
-    }
-    if (!playerStore.userId) {
-      throw new Error('No authenticated user found. Please log in.');
-    }
+const selectedSongs = computed(() => {
+  if (!songs.value || !selectedSongIds.value || selectedSongIds.value.length === 0) {
+    return [];
+  }
+  return songs.value.filter(song => selectedSongIds.value.includes(song.id));
+});
 
+const canCreatePlaylist = computed(() => {
+  return Boolean(
+    playlistName.value &&
+    playlistName.value.trim() &&
+    selectedSongIds.value &&
+    selectedSongIds.value.length > 0 &&
+    playerStore.userId &&
+    !isCreatingPlaylist.value
+  );
+});
 
-    const formData = new FormData();
-    formData.append('file', file.value);
+const isCreating = computed(() => {
+  return isUploading.value || isCreatingPlaylist.value;
+});
 
-    const payload = {
-      name: playlistName.value.trim(),
-      song_ids: selectedSongs.value,
-      user_id: playerStore.userId.toString(),
-      is_public: true,
-      is_system: true,
-      cover_url: coverUrl,
-    };
+// Methods
+const handleFileUpload = async (event) => {
+  const uploadedFile = event.target.files[0];
+  if (!uploadedFile) return;
 
-    console.log('Creating playlist with JSON:', payload);
+  // Validate file
+  if (!uploadedFile.type.startsWith('image/')) {
+    mutationError.value = 'Please select a valid image file';
+    return;
+  }
 
-    if (!selectedSongs.value.every(id => typeof id === 'number')) {
-      console.error('Invalid song_ids:', selectedSongs.value);
-      throw new Error('Invalid song selection. Please try again.');
-    }
+  if (uploadedFile.size > 5 * 1024 * 1024) { // 5MB limit
+    mutationError.value = 'Image file must be under 5MB';
+    return;
+  }
+
+  file.value = uploadedFile;
+  mutationError.value = null;
+
+  // Just prepare the file, don't upload separately
+  await uploadCover(uploadedFile);
+};
+
+const uploadCover = async (fileToUpload) => {
+  try {
+    isUploading.value = true;
+    mutationError.value = null;
+
+    // Create a temporary URL for the file (for preview/validation)
+    const tempUrl = URL.createObjectURL(fileToUpload);
+    uploadedCoverUrl.value = tempUrl;
+
+    console.log('Cover file prepared for upload:', fileToUpload.name);
+
+    // Note: We'll send the file along with the playlist creation request
+    // instead of uploading separately
+
+  } catch (error) {
+    console.error('Cover preparation failed:', error);
+    mutationError.value = `Cover preparation failed: ${error.message}`;
+  } finally {
+    isUploading.value = false;
+  }
+};
+
+const removeSong = (songId) => {
+  if (selectedSongIds.value) {
+    selectedSongIds.value = selectedSongIds.value.filter(id => id !== songId);
+  }
+};
+
+const resetForm = () => {
+  playlistName.value = '';
+  selectedSongIds.value = [];
+  file.value = null;
+  uploadedCoverUrl.value = null;
+  mutationError.value = null;
+  songSearch.value = '';
+  isUploading.value = false;
+  isCreatingPlaylist.value = false;
+};
+
+// Create playlist mutation
+const { mutate: createPlaylistMutation } = useMutation({
+  mutationFn: async (payload) => {
+    console.log('Creating playlist with payload:', payload);
 
     const response = await playlistService.createPlaylist(payload);
-    if (!response.data) {
-      throw new Error('Invalid response from server: No data returned.');
+
+    if (response.status !== 'success') {
+      throw new Error(response.message || 'Failed to create playlist');
     }
+
     return response.data;
   },
   onSuccess: (data) => {
-    console.log('Playlist creation successful:', data);
+    console.log('Playlist created successfully:', data);
+    queryClient.invalidateQueries(['playlists']);
     emit('create', data);
-    playlistName.value = '';
-    selectedSongs.value = [];
-    file.value = null;
-    mutationError.value = null;
+    resetForm();
   },
-  onError: (err) => {
-    let errorMessage = err.message;
-    if (err.message.includes('HTTP error')) {
-      try {
-        const errorBody = JSON.parse(err.message.match(/body: ({.*})/)[1]);
-        errorMessage = errorBody.message || 'Failed to create playlist. Please try again.';
-      } catch {
-        errorMessage = 'Failed to create playlist. Invalid server response.';
-      }
-    }
-    mutationError.value = errorMessage;
-    console.error('Error creating playlist:', err);
-  },
+  onError: (error) => {
+    console.error('Playlist creation failed:', error);
+    mutationError.value = error.message || 'Failed to create playlist';
+    isCreatingPlaylist.value = false;
+  }
 });
 
-const handleFileUpload = (event) => {
-  const uploadedFile = event.target.files[0];
-  if (uploadedFile && uploadedFile.type.startsWith('image/') && uploadedFile.size < 5 * 1024 * 1024) {
-    file.value = uploadedFile;
+const handleCreatePlaylist = async () => {
+  try {
     mutationError.value = null;
-  } else {
-    file.value = null;
-    mutationError.value = 'Please upload a valid image file under 5MB.';
+
+    if (!playlistName.value || !playlistName.value.trim()) {
+      mutationError.value = 'Please enter a playlist name';
+      return;
+    }
+
+    if (!selectedSongIds.value || selectedSongIds.value.length === 0) {
+      mutationError.value = 'Please select at least one song';
+      return;
+    }
+
+    if (!playerStore.userId) {
+      mutationError.value = 'User not authenticated. Please login again.';
+      return;
+    }
+
+    isCreatingPlaylist.value = true;
+    const selectedSongIdsArray = selectedSongIds.value;
+
+    const formData = new FormData();
+    formData.append('name', playlistName.value.trim());
+    formData.append('user_id', playerStore.userId.toString());
+    formData.append('is_public', 'true');
+    formData.append('is_system', 'false');
+    selectedSongIdsArray.forEach(songId => {
+      formData.append('song_ids[]', songId);
+    });
+    if (file.value) {
+      formData.append('cover', file.value);
+    }
+
+    console.log('Creating playlist with FormData');
+    console.log('Selected song IDs:', selectedSongIdsArray);
+    console.log('FormData contents:');
+    for (let [key, value] of formData.entries()) {
+      console.log(key, value);
+    }
+    createPlaylistMutation(formData);
+
+  } catch (error) {
+    console.error('Error in handleCreatePlaylist:', error);
+    mutationError.value = error.message || 'An unexpected error occurred';
+    isCreatingPlaylist.value = false;
   }
 };
 </script>
@@ -206,39 +345,32 @@ const handleFileUpload = (event) => {
   justify-content: center;
   align-items: center;
   z-index: 1000;
-
   animation: fadeIn 0.3s ease-out;
 }
-
 
 .modal-content {
   background: linear-gradient(135deg, #805379, #3b0d84);
   padding: 2rem;
   border-radius: 16px;
   width: 90%;
-  max-width: 550px;
-  max-height: 85vh;
+  max-width: 600px;
+  max-height: 90vh;
   overflow-y: auto;
   box-shadow: 0 12px 32px rgba(0, 0, 50, 0.3);
   font-family: 'Inter', sans-serif;
-  color:white;
+  color: white;
   animation: slideUp 0.3s ease-out;
 }
 
-/* Headings */
-h2, h3 {
+h2, h3, h4 {
   color: #fefeff;
   font-weight: 700;
   margin-bottom: 1rem;
 }
 
-h2 {
-  font-size: 1.8rem;
-}
-
-h3 {
-  font-size: 1.3rem;
-}
+h2 { font-size: 1.8rem; }
+h3 { font-size: 1.3rem; }
+h4 { font-size: 1.1rem; }
 
 .song-count {
   color: #f6f6ff;
@@ -265,7 +397,13 @@ h3 {
   margin-top: 0.5rem;
 }
 
-/* Input fields */
+.cover-success {
+  color: #52c41a;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  font-weight: 500;
+}
+
 .modal-input {
   width: 100%;
   padding: 0.9rem;
@@ -301,12 +439,13 @@ h3 {
 }
 
 .song-list {
-  max-height: 320px;
+  max-height: 300px;
   overflow-y: auto;
   background: #f0f0ff;
   border-radius: 12px;
   padding: 1rem;
   border: 1px solid #d0d0e6;
+  margin-bottom: 1rem;
 }
 
 .song-item {
@@ -357,6 +496,48 @@ h3 {
   font-weight: 500;
 }
 
+.selected-songs {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.selected-list {
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.selected-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  color: #2a2a3d;
+}
+
+.remove-btn {
+  background: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+
+.remove-btn:hover {
+  background: #ff7875;
+}
+
 .no-songs {
   text-align: center;
   color: #7a7a9a;
@@ -394,10 +575,16 @@ h3 {
   color: #ffffff;
 }
 
-.modal-save-btn:hover {
+.modal-save-btn:hover:not(:disabled) {
   background: linear-gradient(90deg, #5e0171, #d506d5);
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(142, 142, 239, 0.4);
+}
+
+.modal-save-btn:disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .modal-cancel-btn {
@@ -411,7 +598,6 @@ h3 {
   box-shadow: 0 6px 16px rgba(0, 0, 50, 0.2);
 }
 
-/* Loading state */
 .loading-state {
   display: flex;
   flex-direction: column;
@@ -419,6 +605,7 @@ h3 {
   justify-content: center;
   gap: 1rem;
   color: #7a7a9a;
+  padding: 2rem;
 }
 
 .spinner {
@@ -430,7 +617,6 @@ h3 {
   animation: spin 1s linear infinite;
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; }
   to { opacity: 1; }
@@ -445,4 +631,3 @@ h3 {
   to { transform: rotate(360deg); }
 }
 </style>
-```
