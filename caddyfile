@@ -15,7 +15,7 @@
     }
 
     handle /api/* {
-        reverse_proxy http://localhost:3000 {  # Change to :8001 if backend runs on 8001
+        reverse_proxy http://localhost:3000 { 
             header_up Host {host}
             header_up X-Real-IP {remote}
             header_up X-Forwarded-Proto {scheme}
@@ -23,7 +23,7 @@
     }
 
     handle {
-        root  D:\src\frontend-spa\dist
+        root  D:\CT313H_Lab\ct313hm01-project-hfu186\frontend-spa\dist
         try_files {path} /index.html
         file_server
     }
